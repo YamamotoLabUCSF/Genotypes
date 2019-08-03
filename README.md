@@ -36,13 +36,13 @@ Jupyter Notebook file requires *ImputedGenotypes_img* directory containing five 
 
 * Locally install **BLASTN** (see Requirements)  
 <img src="ImputedGenotypes_img/BLASTN_thumbnail-01.png" align="left" width="100">
-<br clear="all" />  
+<br clear="all" />
 
 * Download or create a **reference sequence database** (required for BLASTN alignment operations)  
 *this can be obtained in one of two ways:*  
- * create custom database from a fasta file containing reference sequence(s) using MAKEBLASTDB (NCBI)  
+  * create custom database from a fasta file containing reference sequence(s) using MAKEBLASTDB (NCBI)  
 (details at <https://www.ncbi.nlm.nih.gov/books/NBK279688/>)
- * download pre-formatted NCBI BLAST database (details at <https://www.ncbi.nlm.nih.gov/books/NBK537770/>)  
+  * download pre-formatted NCBI BLAST database (details at <https://www.ncbi.nlm.nih.gov/books/NBK537770/>)  
    
 <img src="ImputedGenotypes_img/BLASTN_reference_database_thumbnail-01.png" align="left" width="150">
 <br clear="all" />
