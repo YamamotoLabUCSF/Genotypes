@@ -16,26 +16,26 @@ Define alleles and impute genotypes for deeply sequenced genetic loci (PCR ampli
 * [Contact](#contact)
 
 ## Background
-This script returns allele definitions (and imputed genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also imputes genotype (homozygous, heterozygous) across the sequenced locus for each sample.
+This script returns allele definitions (and imputed genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify a BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, substitution, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also imputes genotype (homozygous, heterozygous) across the sequenced locus for each sample.
 <br clear="all" />
-<img src="ImputedGenotypes_img/ImputedGenotypes_thumbnail_sketch-01.png" align="left" width="750">
+<img src="ImputedGenotypes_img/ImputedGenotypes_thumbnail_sketch.png" align="left" width="750">
 <br clear="all" />
 ## Features
 * Automates allele definitions and imputes genotypes at specific loci, for amplicons deeply sequenced on Illumina® platforms
 * Key input: demultiplexed fastq files
-* Key outputs: sequence alignments for candidate alleles (reads ranked by abundance), with optional DNA sub-sequence(s) mapped on alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA sub-sequence(s) to test for presence/ablation)
+* Key outputs: sequence alignments for candidate alleles (reads ranked by abundance), with optional DNA sub-sequence(s) mapped on alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA sub-sequence(s) to test for presence/ablation); imputed genotypes
 
 ## Setup
-Code is available as a Jupyter Notebook file (**ImputedGenotypes.ipynb**) or as a Python program file (**ImputedGenotypes.py**).  
+Code is available as a Jupyter Notebook file (**ImputedGenotypes.ipynb**) or as a Python program file (**ImputedGenotypes.py**) for direct use, or pre-packaged with all dependencies as an Open Virtualization Format file for virtual machines (**Alleles\_and\_altered\_motifs.ovf**).  
 
-To use: fork and clone this repository to a local destination, or download the file ImputedGenotypes.ipynb or ImputedGenotypes.py.  
+To use: (1) fork and clone this repository to a local destination, or (2) download the file ImputedGenotypes.ipynb or ImputedGenotypes.py (GitHub) or Alleles\_and\_altered\_motifs.ovf (Zenodo, DOI 10.5281/zenodo.3406862). 
 
 Jupyter Notebook file requires *ImputedGenotypes_img* directory containing five image files to be available in the directory from which the Jupyter Notebook was opened.  
 
 *Additional setup*:  
 
 * Locally install **BLASTN** (see Requirements)  
-<img src="ImputedGenotypes_img/BLASTN_thumbnail-01.png" align="left" width="100">
+<img src="ImputedGenotypes_img/BLASTN_thumbnail.png" align="left" width="100">
 <br clear="all" />
 
 * Download or create a **reference sequence database** (required for BLASTN alignment operations)  
@@ -44,7 +44,7 @@ Jupyter Notebook file requires *ImputedGenotypes_img* directory containing five 
 (details at <https://www.ncbi.nlm.nih.gov/books/NBK279688/>)
   * download pre-formatted NCBI BLAST database (details at <https://www.ncbi.nlm.nih.gov/books/NBK537770/>)  
    
-<img src="ImputedGenotypes_img/BLASTN_reference_database_thumbnail-01.png" align="left" width="150">
+<img src="ImputedGenotypes_img/BLASTN_reference_database_thumbnail.png" align="left" width="150">
 <br clear="all" />
 
 
@@ -64,25 +64,25 @@ details).
 >(see 'Input notes' for details).
 
 For further usage details, please refer to the following manuscript:  
->*Ehmsen, Knuesel, Stenglein, Martinez, Asahina, Aridomi, DeRisi, Yamamoto (2019)*
+>*Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2019)*
     
 Please cite usage as:  
 >ImputedGenotypes.py  
->*Ehmsen, Knuesel, Stenglein, Martinez, Asahina, Aridomi, DeRisi, Yamamoto (2019)*
+>*Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2019)*
 
 
 ## Operation notes
 *What does this script do?*  
 
- 1. **classify & count reads:** counts unique read types per well (*i.e.*, sample); fastq file name provides the sample name  
+ 1. **classify & count reads:** counts unique read types per well (*i.e.*, sample ID); fastq file name provides the sample name  
  
  
- 2. **identify top 10 reads** per well (in terms of read abundance); calculates representation among reads within the well at four levels:
+ 2. **identify top 10 reads** per sample ID (in terms of read abundance); calculates representation among reads within the well at four levels:
  
    * raw frequency (% read type in question, relative to total reads)  
    * percentile (% of other read types that fall below the frequency of the read type in question)  
-   * adjusted frequency @ 1% (% read type in question, relative to reads that occur at >1% frequency)  
-   * adjusted frequency @ 10% (% read type in question, relative to reads that occur at >10% frequency)  
+   * adjusted frequency @ 1% (% read type in question, relative to reads that occur at >1% total frequency)  
+   * adjusted frequency @ 10% (% read type in question, relative to reads that occur at >10% total frequency)  
    
    
  3. **align to reference database:** aligns top 10 reads to reference database using BLASTN  
@@ -109,7 +109,7 @@ Please cite usage as:
 **Operations overview:** *See 
 Input notes' and 'Output notes'*  
 Files labeled *i-iv* below: Key output files containing script interpretations of sample alleles & genotypes.
-<img src="ImputedGenotypes_img/ImputedGenotypes_thumbnail_2-01.png" align="left" width="650">
+<img src="ImputedGenotypes_img/ImputedGenotypes_thumbnail_2.png" align="left" width="650">
 <br clear="all" />
  
 

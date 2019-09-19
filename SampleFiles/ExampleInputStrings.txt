@@ -1,8 +1,0 @@
-User-entered variables:
-    output_directory: /Users/kirkehmsen/Desktop/072419_ImputedGenotypes_KE4
-    fastq_directory: /Users/kirkehmsen/Documents/fastq_files
-    blastn_path: /Users/kirkehmsen/anaconda3/bin/blastn
-    db_path: /Users/kirkehmsen/Desktop/blastn_database
-    db_prefix: GRCh38
-    guideRNA_seq: GTGCCAGCCACATTCAGAAC
-    extant_seq: AGAACAGGGTGTTCTG
