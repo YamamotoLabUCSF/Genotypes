@@ -421,8 +421,8 @@ def frequency_plots():
     # top 10 most abundant reads, (3) frequency relative to reads that occur at >1% raw abundance; (4) frequency relative to
     # reads that occur at >10% raw abundance
     for samplename in imputedgenotypes_dict:
-        plot_name = '/Users/kirkehmsen/Desktop/'+samplename+'_plot.png'
-        pdf_output = '/Users/kirkehmsen/Desktop/'+samplename+'_.pdf'
+        plot_name = output_directory / (samplename+'_plot.png')
+        pdf_output = output_directory / (samplename+'_.pdf')
         R1_allele_list = []
         R2_allele_list = []
         R1_allele_names = []
