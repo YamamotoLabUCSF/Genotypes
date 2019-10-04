@@ -1412,12 +1412,24 @@ for i in alignmentoutput_dict2:
         else:
             guideRNA_seq_orientation_list = []
             guide_positions_list = []
+            guideRNA_match = ''
+            guideRNA_revcomp_match = ''
             for guide in guideRNA_seq:
-                guideRNA_match = re.search(guide, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(guide, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                if bool(re.search('-', alignmentoutput_dict2.get(i)[x][7])):
+                    if bool(re.search('-', alignmentoutput_dict2.get(i)[x][8])):
+                        guideRNA_match = re.search(guide, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(guide, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                    else:
+                        guideRNA_match = re.search(guide, alignmentoutput_dict2.get(i)[x][8].replace('-', ''))
+                else:
+                    guideRNA_match = re.search(guide, alignmentoutput_dict2.get(i)[x][7].replace('-', '')) 
                 if not guideRNA_match:
                     guide_revcomp = ''.join(reversed(''.join(nt_dict.get(nt) for nt in guide)))
                     guide_rev = ''.join(reversed(guide))
-                    guideRNA_revcomp_match = re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                    if bool(re.search('-', alignmentoutput_dict2.get(i)[x][7])):
+                        if bool(re.search('-', alignmentoutput_dict2.get(i)[x][8])):
+                            guideRNA_revcomp_match = re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                        else:
+                            guideRNA_revcomp_match = re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(guide_revcomp, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
                     if not guideRNA_revcomp_match:
                         guideRNA_seq_orientation_list.append('guide')
                         guide_positions_list.append('None')
@@ -1435,18 +1447,35 @@ for i in alignmentoutput_dict2:
         else:
             extant_seq_orientation_list = []
             seq_positions_list = []
+            extant_match = ''
+            seq_revcomp_match = ''
             for seq in extant_seq:
-                extant_match = re.search(seq, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(seq, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                # if test sequence is found in forward direction in query or hit:
+                extant_match = re.search(seq, alignmentoutput_dict2.get(i)[x][8]) or re.search(seq, alignmentoutput_dict2.get(i)[x][7])
                 if not extant_match:
                     seq_revcomp = ''.join(reversed(''.join(nt_dict.get(nt) for nt in seq)))
                     seq_rev = ''.join(reversed(seq))
-                    seq_revcomp_match = re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                    # if test sequence is found in reverse direction in query:
+                    seq_revcomp_match = re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][8]) or re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][7])
                     if not seq_revcomp_match:
-                        extant_seq_orientation_list.append(seq)
-                        seq_positions_list.append('None')
+                        extant_match = re.search(seq, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(seq, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                        if extant_match:
+                            pad_match = len(re.findall('-', alignmentoutput_dict2.get(i)[x][8])) or len(re.findall('-', alignmentoutput_dict2.get(i)[x][8]))
+                            extant_seq_orientation_list.append(seq)
+                            seq_positions_list.append(extant_match.start()+pad_match)
+                        if not extant_match:
+                            seq_revcomp_match = re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][8].replace('-', '')) or re.search(seq_revcomp, alignmentoutput_dict2.get(i)[x][7].replace('-', ''))
+                            if seq_revcomp_match:
+                                pad_match = len(re.findall('-', alignmentoutput_dict2.get(i)[x][8])) or len(re.findall('-', alignmentoutput_dict2.get(i)[x][7]))
+                            if not seq_revcomp_match:
+                                extant_seq_orientation_list.append(seq)
+                                seq_positions_list.append('None')
+                            else:
+                                extant_seq_orientation_list.append(seq_rev)     
+                                seq_positions_list.append(seq_revcomp_match.start())
                     else:
                         extant_seq_orientation_list.append(seq_rev)     
-                        seq_positions_list.append(seq_revcomp_match.start())
+                        seq_positions_list.append(seq_revcomp_match.start()) 
                 else:
                     extant_seq_orientation_list.append(seq)
                     seq_positions_list.append(extant_match.start())
@@ -1464,7 +1493,7 @@ for i in alignmentoutput_dict2:
             if bool(re.search('indel', n)):
                 imputedgenotypes_dict[i].insert(0, '|homozygous| indel (indel/indel')
             if bool(re.search('substitution', n)):
-                imputedgenotypes_dict[i].insert(0, '|homozygous| substitution (sub/sub')
+                imputedgenotypes_dict[i].insert(0, '|homozygous| substitution (sub/sub)')
     #heterozygous states
     elif len(set(imputed_genotype)) == 2:
     # with wild-type allele
