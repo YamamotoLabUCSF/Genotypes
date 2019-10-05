@@ -524,7 +524,7 @@ def frequency_plots():
         rects2 = ax1.barh(spacing2, y2a, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
         ax1.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
         ax1.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax1.set_title('Allele frequencies\n(% total reads)', fontsize=9, fontweight='bold', fontname='Myriad Pro')
+        ax1.set_title('Allele frequencies\n(% total reads)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
         plt.xlim([0,120])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
@@ -556,7 +556,7 @@ def frequency_plots():
         rects2 = ax2.barh(spacing2, y2b, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
         ax2.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
         ax2.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax2.set_title('Allele frequencies\n(% top 10 most abundant reads)', fontsize=9, fontweight='bold', fontname='Myriad Pro')
+        ax2.set_title('Allele frequencies\n(% top 10 most abundant reads)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
         plt.xlim([0,120])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
@@ -588,7 +588,7 @@ def frequency_plots():
         rects2 = ax3.barh(spacing2, y2c, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
         ax3.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
         ax3.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax3.set_title('Allele frequencies\n(% reads adjusted for frequency >1%)', fontsize=9, fontweight='bold', fontname='Myriad Pro')
+        ax3.set_title('Allele frequencies\n(% reads adjusted for frequency >1%)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
         plt.xlim([0,120])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
@@ -620,7 +620,7 @@ def frequency_plots():
         rects2 = ax4.barh(spacing2, y2d, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
         ax4.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
         ax4.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax4.set_title('Allele frequencies\n(% reads adjusted for frequency >10%)', fontsize=9, fontweight='bold', fontname='Myriad Pro')
+        ax4.set_title('Allele frequencies\n(% reads adjusted for frequency >10%)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
         plt.xlim([0,120])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
@@ -714,12 +714,12 @@ def frequency_plots():
                     allele_count_R2 = allele_count_R2+1
                     pdf.ln(4)
         pdf.ln(5)
-        pdf.image(plot_name, x = None, y = None, w = 195, h = 0, type = '', link = '')
-        pdf.output(pdf_output)
+        pdf.image(str(plot_name), x = None, y = None, w = 195, h = 0, type = '', link = '')
+        pdf.output(str(pdf_output))
 #    
         merger = PdfFileMerger()
 #   
-        filenames =[str(allele_evidence_output), pdf_output]
+        filenames =[str(allele_evidence_output), str(pdf_output)]
 #
         for filename in filenames:
             merger.append(PdfFileReader(filename, 'rb'))
