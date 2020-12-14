@@ -1,30 +1,30 @@
 #!/usr/local/bin/anaconda3/bin/python3
 # Note: edit shebang line above as appropriate for your system
 # NAME: Kirk Ehmsen
-# FILE: ImputedGenotypes.py
+# FILE: Genotypes.py
 # DATE: 08-30-2018/08-02-2019
 # DESC: This script accepts text to standard input, and returns allele definitions for samples
 # from a demultiplexed NGS fastq dataset.
-# USAGE: ./ImputedGenotypes.py or python3 ImputedGenotypes.py
-# REPO: https://github.com/YamamotoLabUCSF/ImputedGenotypes
+# USAGE: ./Genotypes.py or python3 Genotypes.py
+# REPO: https://github.com/YamamotoLabUCSF/Genotypes
 
 #############################################################################
 # Background notes:
 # ==============================================
-# This is ImputedGenotypes.py v1.0
+# This is Genotypes.py v1.0
 # ==============================================
-# https://github.com/YamamotoLabUCSF/ImputedGenotypes
+# https://github.com/YamamotoLabUCSF/Genotypes
 # v1.0/Committed 8-02-2019
 # ----------------------------------------------
 # For usage details, please refer to README file at GitHub and to the following manuscript:
-#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2019)
+#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2020)
 # Please cite usage as:
-#   ImputedGenotypes.py
-#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2019)
+#   Genotypes.py
+#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2020)
 
 # Operation notes:
 # ==============================================
-# This script accepts text to standard input, and returns allele definitions (and imputed genotypes) for samples
+# This script accepts text to standard input, and returns allele definitions (and extrapolated genotypes) for samples
 # from a demultiplexed NGS fastq dataset. Required: Python 3.7.0 or higher + 3rd-party libraries NumPy, SciPy, psutil,
 # fdpf, PyPDF2; BLASTN (NCBI) locally installed
 # What does this script do?
@@ -42,7 +42,7 @@
 #    -  also indicates location of test sub-sequence(s) and whether sub-sequence is altered (ablated),
 #       if test sub-sequence(s) supplied by user
 # 5. provides overall population statistics:
-#   (a) total sample # for which genotypes were imputed
+#   (a) total sample # for which genotypes were inferred
 #   (b) distribution of genotypes among samples (homozygous, heterozygous, etc.)
 #   (c) estimated wild-type vs. mutant allele frequencies
 #   (e) summary of samples and reads that either had 'no hit' in reference database provided to BLASTN,
@@ -77,22 +77,22 @@
 #        samples returned in order of processing)
 #     4. allele_evidence.pdf (*optional*; output of script operation on blastn_alignments.txt,
 #        plots of calculated read/allele frequencies)
-#     5. imputed_genotypes.txt (output of script operation on blastn_alignments.txt,
-#        samples returned in ranked order based on genotype imputation)
+#     5. genotypes.txt (output of script operation on blastn_alignments.txt,
+#        samples returned in ranked order based on genotype inference)
 #     6. allele_definitions.csv (tabular representation of allele data for all samples)
-#	  7. population_summary.txt (output of script operation on imputed_genotypes.txt)
+#	  7. population_summary.txt (output of script operation on genotypes.txt)
 #     8. script_metrics.txt (summary/analysis of script operation metrics [metadata])
 #
-#           Directory structure under an output directory specified as 'ImputedGenotypes', for example,
-#           would contain the following subdirectories and files following ImputedGenotypes.py operations:
+#           Directory structure under an output directory specified as 'Genotypes', for example,
+#           would contain the following subdirectories and files following Genotypes.py operations:
 #
-#           /ImputedGenotypes
+#           /Genotypes
 #                          `-----allele_definitions.csv
 #                          `-----allele_definitions.txt
 #                          `-----allele_evidence.pdf
 #                          `-----blastn_alignments.txt
 #                          `-----fasta.fa
-#                          `-----imputed_genotypes.txt
+#                          `-----genotypes.txt
 #                          `-----population_summary.txt
 #                          `-----script_metrics.txt
 # 
@@ -100,6 +100,53 @@
 
 #############################################################################
 # SCRIPT:
+
+# Check for availability of Python dependencies (libraries, modules) in path
+missing_dependencies_list = []
+
+try:
+    import psutil
+except ImportError:
+    missing_dependencies_list.append('psutil')
+    
+try:
+    import numpy
+except ImportError:
+    missing_dependencies_list.append('numpy')
+
+try:
+    import scipy
+except ImportError:
+    missing_dependencies_list.append('scipy')
+    
+try:
+    import matplotlib.pyplot
+except ImportError:
+    missing_dependencies_list.append('matplotlib.pyplot')
+    
+try:
+    import fpdf
+except ImportError:
+    missing_dependencies_list.append('fpdf')
+    
+try:
+    import PyPDF2
+except ImportError:
+    missing_dependencies_list.append('PyPDF2')
+
+try:
+    import pandas
+except ImportError:
+    missing_dependencies_list.append('pandas')
+    
+if len(missing_dependencies_list) > 0:
+    print('ModuleNotFoundError\n')
+    print('Please note, the following required Python module(s) are not found in your Python system path:')
+    for i in missing_dependencies_list:
+        print('   '+i)
+    print('\nPlease exit the script and install these Python dependencies in your system path.')
+    print("""\nGuidelines for installation of Python dependencies can be found in the README file for Genotypes.py ('System Setup')""")
+    print("""    (Creation of a Python virtual environment is recommended)""")
 
 # Import libraries, modules
 # Operating system interfaces
@@ -115,6 +162,9 @@ import sys
 # Process and system utilities
 import psutil
 from psutil import virtual_memory
+
+# Gzip to read GNU zipped files
+import gzip
 
 # Low-level networking interface
 import socket
@@ -194,11 +244,11 @@ def prompts():
         4. allele_evidence.pdf (optional)
             (output of script operation on blastn_alignments.txt, plot of calculated read/allele frequencies)
 
-        5. imputed_genotypes.txt
-            (output of script operation on blastn_alignments.txt, samples returned in order of genotype imputation)
+        5. genotypes.txt
+            (output of script operation on blastn_alignments.txt, samples returned in order of genotype inference)
 
         6. population_summary.txt
-            (output of script operation on imputed_genotypes.txt)
+            (output of script operation on genotypes.txt)
                   
         7. allele_definitions.csv
             (allele metrics (frequency representations) and definitions for each sample, in spreadsheet format)
@@ -209,20 +259,20 @@ def prompts():
             Notes: 
             * These files do not exist before the script is run. The files are made by the script.
             * The primary data outputs for genotypes are found in:
-                 allele_definitions.txt, allele_evidence.pdf, imputed_genotypes.txt & population_summary.txt
+                 allele_definitions.txt, allele_evidence.pdf, genotypes.txt & population_summary.txt
         
         
     At this prompt, indicate an absolute path to a ** directory ** that will be created by the script as the location
     for output files.  This directory should not exist yet -- it will be created as an output of this script, and will
     be populated with the file outputs of this specific instance of the script operation.
 
-    Example: if you'd like to create a directory ('ImputedGenotypes') in an existing directory ('Illumina'), accessed
-    with absolute path of '/Users/myname/Illumina/ImputedGenotypes' (Mac) or 'C:\Users\myname\Illumina\ImputedGenotypes'
-    (Windows), enter '/Users/myname/Illumina/ImputedGenotypes' at the command line prompt. Replace 'myname' with the
+    Example: if you'd like to create a directory ('Genotypes') in an existing directory ('Illumina'), accessed
+    with absolute path of '/Users/myname/Illumina/Genotypes' (Mac) or 'C:\Users\myname\Illumina\Genotypes'
+    (Windows), enter '/Users/myname/Illumina/Genotypes' at the command line prompt. Replace 'myname' with the
     appropriate intervening directory identifiers. Do *not* flank your entry with quotation marks (') at the command
     line.
     
-    Alternatively, simply enter a desired directory name (e.g., 'ImputedGenotypes') and run this script from
+    Alternatively, simply enter a desired directory name (e.g., 'Genotypes') and run this script from
     within a directory where you'd like to create this new directory."""+'\n')
     output_directory = input(r"""    -----> Output directory name and path:  """)
     # 2-Specify the fastq files to be used for input, by indicating directory location of the file list.
@@ -232,7 +282,7 @@ def prompts():
     ------------------------------------------------------------------------------
 
     You will now be asked to enter the path to the directory containing the fastq files
-    to be processed as ImputedGenotypes.py input.  
+    to be processed as Genotypes.py input.  
 
     Example: if your fastq input files are named file1.fastq, file2.fastq, etc. and are found in a directory
     named 'Sequences' with absolute path of '/Users/myname/Sequences' (Mac) or 'C:\Users\myname\Sequences' (PC),
@@ -287,11 +337,11 @@ def prompts():
     Optional: Nucleotide sequence(s) to identify in output alignments
     -----------------------------------------------------------------
     
-    Some applications of 'allele definition' and 'genotype imputation' may call for identification of the presence
+    Some applications of 'allele definition' and 'genotype inference' may call for identification of the presence
     or absence of a specific anticipated sub-sequence (few nucleotides), and/or for the mapping of the location of
     a sub-sequence if present in the sequence alignment.
     
-    ImputedGenotypes.py allows for the optional testing of sub-sequences.
+    Genotypes.py allows for the optional testing of sub-sequences.
     
     If you would like to specify subsequences, type 'Yes' and press Enter.
     Otherwise, if you do not wish to specify subsequences, type 'No' and press Enter."""+'\n')
@@ -341,10 +391,10 @@ def prompts():
 # Define 'allele_output' function to report defined alleles for samples based on genotype class designation
 def allele_output(genotype_class):
     """
-    This function outputs allele definitions for samples belonging to a specified class of imputed genotypes
+    This function outputs allele definitions for samples belonging to a specified class of inferred genotypes
     """
     for i in genotype_class:
-        file.write(i+'\n'+(18+len(imputedgenotypes_dict.get(i)[0]))*'*'+'\n'+'IMPUTED GENOTYPE: '+imputedgenotypes_dict.get(i)[0]+'\n'+(18+len(imputedgenotypes_dict.get(i)[0]))*'*'+'\n\n')
+        file.write(i+'\n'+(18+len(imputedgenotypes_dict.get(i)[0]))*'*'+'\n'+'INFERRED GENOTYPE: '+imputedgenotypes_dict.get(i)[0]+'\n'+(18+len(imputedgenotypes_dict.get(i)[0]))*'*'+'\n\n')
         read_checklist = []
         read_abundance_checklist = []
         for n in range(1, len(imputedgenotypes_dict.get(i))):
@@ -413,7 +463,7 @@ def frequency_plots():
     pdf.add_page()
     pdf.set_font("Arial", size=20, style='B')
     pdf.ln(20)
-    pdf.write(5, 'Frequency plots to support imputed genotypes')
+    pdf.write(5, 'Frequency plots to support inferred genotypes')
     pdf.output(allele_evidence_output)
     # Generate allele frequency plots for each sample, based on the following principles and frequency metrics:
     # for each sample, up to 10 candidate alleles are 'ranked' based on relative read frequency in the initial fastq file
@@ -656,7 +706,7 @@ def frequency_plots():
         pdf.write(5, samplename)
         pdf.ln(3)
         pdf.set_font("Arial", size=7)
-        pdf.write(5, 'imputed genotype: '+imputedgenotypes_dict[samplename][0].split('|')[1]+','+imputedgenotypes_dict[samplename][0].split('|')[2])
+        pdf.write(5, 'inferred genotype: '+imputedgenotypes_dict[samplename][0].split('|')[1]+','+imputedgenotypes_dict[samplename][0].split('|')[2])
         pdf.ln(5)
         allele_count_R1 = 1
         allele_count_R2 = 1
@@ -762,9 +812,9 @@ def path_size(given_path):
 # Welcome/orient to script
 print("""
     ===================================================
-    ImputedGenotypes.py v1.0
+    Genotypes.py v1.0
     ===================================================
-    https://github.com/YamamotoLabUCSF/ImputedGenotypes
+    https://github.com/YamamotoLabUCSF/Genotypes
     v1.0/Committed 8-02-2019
     ---------------------------------------------------
     This script accepts text to standard input, and returns allele definitions for samples from a demultiplexed
@@ -774,11 +824,11 @@ print("""
     BLASTN can be downloaded and locally installed at 'https://www.ncbi.nlm.nih.gov/guide/howto/run-blast-local/'.
     
     For usage details, please refer to README file at GitHub and to the following manuscript:
-        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2019)
+        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2020)
     
     Please cite usage as:
-        ImputedGenotypes.py
-        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2019)
+        Genotypes.py
+        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2020)
     
     -------------------------------------------------------------------------------
     Welcome.  You will now be prompted for the following user-specific information:
@@ -821,11 +871,11 @@ elif user_input == 'List':
 
     You specified LIST format to specify input values.
     ..............................................................................................................
-    Some applications of 'allele definition' and 'genotype imputation' may call for identification of the presence
+    Some applications of 'allele definition' and 'genotype inference' may call for identification of the presence
     or absence of a specific anticipated sub-sequence (few nucleotides), and/or for the mapping of the location of
     a sub-sequence if present in the sequence alignment.
     
-    ImputedGenotypes.py allows for the optional testing of sub-sequences.
+    Genotypes.py allows for the optional testing of sub-sequences.
     
     If you would like to specify subsequences, type 'Yes' and press Enter.
     Otherwise, if you do not wish to specify subsequences, type 'No' and press Enter."""+'\n')
@@ -975,7 +1025,7 @@ blastn_path = Path(str(blastn_path))
 db_path = Path(str(db_path))
 
 # Collect fastq files from directory
-myFastqFilenames = [file for file in glob.glob(str(fastq_directory)+'/*') if Path(file).suffix == ".fastq"]
+myFastqFilenames = [file for file in glob.glob(str(fastq_directory)+'/*') if Path(file).suffix in [".gz",".fastq"]]
 
 #Sort fastq file names
 myFastqFilenames = sorted(myFastqFilenames)
@@ -1011,20 +1061,37 @@ calculated across the fastq files to be processed:
 # Collect Illumina run IDs from fastq files, consolidate to unique run IDs
 runIDlist = []
 for sourcefile in myFastqFilenames:
-    with open(sourcefile, "r") as f:
-        runID = ":".join(f.readline().split(":",-2)[:2])
-    if not runID in runIDlist:
-        runIDlist.append(runID) 
+    if Path(sourcefile).suffix == ".gz":
+        with gzip.open(sourcefile, "rt") as f:
+            runID = ":".join(f.readline().split(":",-2)[:2])
+            if not runID in runIDlist:
+                runIDlist.append(runID) 
+    elif Path(sourcefile).suffix == ".fastq":
+        with open(sourcefile, "r") as f:
+            runID = ":".join(f.readline().split(":",-2)[:2])
+            if not runID in runIDlist:
+                runIDlist.append(runID)
 
+# Collect total read counts for fastq files
 readcount = []
 for sourcefile in myFastqFilenames:
-    with open(sourcefile, "r") as f:
-        readcount.append(int(len((f).readlines())/4))
-
+    if Path(sourcefile).suffix == ".gz":
+        with gzip.open(sourcefile, "rt") as f:    
+            readcount.append(int(len((f).readlines())/4))
+    elif Path(sourcefile).suffix == ".fastq":
+        with open(sourcefile, "r") as f:
+            readcount.append(int(len((f).readlines())/4))
+        
+# Collect file sizes for fastq files
 filesize = []
 for sourcefile in myFastqFilenames:
-    filesize.append(round((os.path.getsize(sourcefile)/1048576),5))
+    if Path(sourcefile).suffix == ".gz":
+        with gzip.open(sourcefile, "rt") as f:
+            filesize.append(round((os.path.getsize(sourcefile)/1048576),5))
+    elif Path(sourcefile).suffix == ".fastq":
+        filesize.append(round((os.path.getsize(sourcefile)/1048576),5))
 
+# fastq_overview prepares summation of fastq file names, their sizes, and read counts, to be reported in script_metrics.txt    
 fastq_overview = list(zip(myFastqFilenames, filesize, readcount))
 
 print("""The following data were collected:  """)
@@ -1087,11 +1154,11 @@ To quit the script, type 'Exit' and press enter, or press 'Ctrl+C'.  """)
 
 # Present option to include ('Y') or bypass ('N') frequency plot generation (optional file output, allele_evidence.pdf)
 frequency_plot_check = input("""
-ImputedGenotypes.py is ready to process fastq files. Before script operations begin, please indicate whether visual
+Genotypes.py is ready to process fastq files. Before script operations begin, please indicate whether visual
 plots of allele frequencies should be rendered and delivered in an output file, allele_evidence.pdf.
 
 Note that production of allele_evidence.pdf can require hours of processing time, although the output timing of
-key text files with allele definitions and genotype imputations (e.g., allele_definitions.txt, imputed_genotypes.txt,
+key text files with allele definitions and genotype inferrals (e.g., allele_definitions.txt, genotypes.txt,
 allele_definitions.csv, population_summary.txt) will not be affected.
 
 To PROCEED with script operations that INCLUDE allele_evidence.pdf, type 'Y';
@@ -1114,9 +1181,9 @@ output_path = Path(output_directory)
 
 # Create output files
 if frequency_plot_check == 'Y':
-    filename_list = ['fasta.fa', 'blastn_alignments.txt', 'allele_definitions.txt', 'allele_evidence.pdf', 'imputed_genotypes.txt', 'population_summary.txt', 'allele_definitions.csv', 'script_metrics.txt']
+    filename_list = ['fasta.fa', 'blastn_alignments.txt', 'allele_definitions.txt', 'allele_evidence.pdf', 'genotypes.txt', 'population_summary.txt', 'allele_definitions.csv', 'script_metrics.txt']
 elif frequency_plot_check == 'N':
-    filename_list = ['fasta.fa', 'blastn_alignments.txt', 'allele_definitions.txt', 'imputed_genotypes.txt', 'population_summary.txt', 'allele_definitions.csv', 'script_metrics.txt']
+    filename_list = ['fasta.fa', 'blastn_alignments.txt', 'allele_definitions.txt', 'genotypes.txt', 'population_summary.txt', 'allele_definitions.csv', 'script_metrics.txt']
 
 # Define current date as prefix to all filenames
 processdate = datetime.today().strftime("%m%d%Y")
@@ -1133,7 +1200,7 @@ ramem = mem.total/1073741824
 # Use print redirection to write to target file, in append mode (begin script_metrics.txt)
 filename = Path(str(output_path)+'/'+processdate+'_script_metrics.txt')
 with open(filename, 'a') as f:
-    print("""ImputedGenotypes.py: Script Metrics\nDate: """ + (datetime.today().strftime("%m/%d/%Y")) +
+    print("""Genotypes.py: Script Metrics\nDate: """ + (datetime.today().strftime("%m/%d/%Y")) +
 """\n\nOperating system information:
     name: """ + socket.gethostname() +
 '\n    platform: ' + platform.platform() +
@@ -1184,8 +1251,12 @@ query_input = Path(str(output_path)+'/'+processdate+'_fasta.fa')
 for sourcefile in myFastqFilenames:
     fastaname = re.split('_', os.path.basename(sourcefile))
     # read all lines of fastq file into memory
-    with open(sourcefile, "r") as f:
-        lines = f.readlines()
+    if Path(sourcefile).suffix == ".gz":
+        with gzip.open(sourcefile, "rt") as f:
+            lines = f.readlines()
+    elif Path(sourcefile).suffix == ".fastq":
+        with open(sourcefile, "r") as f:
+            lines = f.readlines()    
     read_lines = lines[1::4]
     # remove \n character from each string item in list:
     read_lines = map(str.strip, read_lines)
@@ -1234,7 +1305,7 @@ alignmentsDuration = str(datetime.now()- startTime_alignments).split(':')[0]+' h
 print("""
 Script is now defining alleles.""")
 
-# Start the clock on genotypes imputation duration
+# Start the clock on genotypes inference duration
 startTime_imputation = datetime.now()
 
 # Impute genotypes from blastn_alignments.txt file
@@ -1335,7 +1406,7 @@ for i in alignmentoutput_dict:
 
 # Make a copy of alignmentoutput_dict, removing dictionary keys with empty tuple values
 alignmentoutput_dict2 = { k : v for k,v in alignmentoutput_dict.items() if v}
-# Alignmentoutput_dict2 is the key input dictionary for genotype imputations
+# Alignmentoutput_dict2 is the key input dictionary for genotype inferences
 
 #for i in alignmentoutput_dict2:
 #    for x in range(0,len(alignmentoutput_dict2.get(i))):
@@ -1347,7 +1418,7 @@ Script is now imputing genotypes.""")
 # Define nt complement dictionary
 nt_dict = {'A':'T', 'T':'A', 'G':'C', 'C':'G', 'N':'N', '-':'-'}
 
-# Prepare dictionary relating sample IDs to their associated 'alleles', allele interpretations/definitions, and imputed genotype
+# Prepare dictionary relating sample IDs to their associated 'alleles', allele interpretations/definitions, and inferred genotype
 imputedgenotypes_dict = {}
 for i in alignmentoutput_dict2:
     imputedgenotypes_dict["{0}".format(i)] = []
@@ -1610,11 +1681,11 @@ else:
 # Print summaries of sample-specific allele definitions to output files; first to allele_definitions.txt, preserving sample order
 allele_definitions_output = Path(str(output_path)+'/'+processdate+'_allele_definitions.txt')
 with open(str(allele_definitions_output), 'a+') as file:
-    file.write('ImputedGenotypes.py: Allele Definitions\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
+    file.write('Genotypes.py: Allele Definitions\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
     for i in querydef_uniq_list:
         if i in imputedgenotypes_dict:
             file.write((len(i)*'=')+'\n'+i+'\n'+(len(i)*'=')+'\n')
-            file.write('Imputed Genotype: '+imputedgenotypes_dict.get(i)[0]+'\n')
+            file.write('Inferred Genotype: '+imputedgenotypes_dict.get(i)[0]+'\n')
             # display alleles and their descriptions
             read_checklist = []
             read_abundance_checklist = []
@@ -1668,7 +1739,7 @@ with open(str(allele_definitions_output), 'a+') as file:
                         file.write('\n')
                 file.write('\n')
 
-# Next print to imputed_genotypes.txt, using imputed genotype criteria as basis for reporting order
+# Next print to genotypes.txt, using imputed genotype criteria as basis for reporting order
 # First prepare lists that bin sampleIDs based on imputed genotype
 # homo genotypes
 imputedgenotypes_homowildtype = []
@@ -1746,8 +1817,8 @@ imputedgenotypes_heterosubstitution.sort()
 imputedgenotypes_multizygous.sort()
 imputedgenotypes_unclear.sort()
            
-# Print to imputed_genotypes.txt
-imputed_genotypes_output = Path(str(output_path)+'/'+processdate+'_imputed_genotypes.txt')
+# Print to genotypes.txt
+imputed_genotypes_output = Path(str(output_path)+'/'+processdate+'_genotypes.txt')
 # samples are returned based on the following priority:
     # imputedgenotypes_homodeletion
     # imputedgenotypes_homoinsertion
@@ -1766,7 +1837,7 @@ imputed_genotypes_output = Path(str(output_path)+'/'+processdate+'_imputed_genot
     # imputedgenotypes_homowildtype
     # imputedgenotypes_unclear
 with open(str(imputed_genotypes_output), 'a+') as file:
-    file.write('ImputedGenotypes.py: Imputed Genotypes\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
+    file.write('=Genotypes.py: Genotypes\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
     if len(imputedgenotypes_homodeletion) > 0:
         file.write('\n\nHOMOZYGOUS DELETION\n...................\n\n')
         allele_output(imputedgenotypes_homodeletion)
@@ -1814,7 +1885,7 @@ with open(str(imputed_genotypes_output), 'a+') as file:
         file.write('\n\nGENOTYPE UNCLEAR (e.g., UNUSUAL ALLELE FREQUENCIES)\n..................................................\n\n')
         allele_output(imputedgenotypes_unclear)
 
-# Log allele definition & genotype imputation time duration
+# Log allele definition & genotype inference time duration
 imputationDuration = str(datetime.now()- startTime_imputation).split(':')[0]+' hr|'+str(datetime.now() - startTime_imputation).split(':')[1]+' min|'+str(datetime.now() - startTime_imputation).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_imputation).split(':')[2].split('.')[1]+' microsec'
 
 # Start the clock on accessory file processing duration (allele_definitions.csv, population_summary.txt)
@@ -1852,7 +1923,7 @@ imputedgenotypes_dataframe.to_csv(path_or_buf=allele_definitions_csv_output, sep
 # Prepare population summary and print to population_summary.txt
 population_summary_output = Path(str(output_path)+'/'+processdate+'_population_summary.txt')
 
-# Create list containing contents of pandas dataframe, summarizing sample-specific allele definitions and imputed genotype properties
+# Create list containing contents of pandas dataframe, summarizing sample-specific allele definitions and inferred genotype properties
 imputedgenotypes_dataframe['sample'].unique().tolist()
 
 # Population metrics: total sample #
@@ -2095,12 +2166,12 @@ for i in no_hits_samplename_list:
         
 # Prepare population_summary.txt file
 with open(str(population_summary_output), 'a+') as file:
-    file.write('ImputedGenotypes.py: Population Summary\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) +
-"""\n\nI. Synopsis of Interpretations: Allele Definitions & Genotype Imputations
+    file.write('Genotypes.py: Population Summary\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) +
+"""\n\nI. Synopsis of Interpretations: Allele Definitions & Genotype Extrapolations
 
     (A) Sample summary
         (i) Number of samples processed: """ + str(total_sample_count) +
-'\n        (ii) % samples called (genotype imputed): ' + str(len(sample_checklist)) + ' (' + str(round((100*(len(sample_checklist)/total_sample_count)),2))+'%)' +
+'\n        (ii) % samples called (genotype inferred): ' + str(len(sample_checklist)) + ' (' + str(round((100*(len(sample_checklist)/total_sample_count)),2))+'%)' +
 """\n\n    (B) Genotypes summary
         (i) % samples diploid (1-2 prominent alleles inferred): """ + str(diploid) + ' (' + str(round((100*(diploid/total_sample_count)),2))+'%)' +
 '\n            (1) % homozygous wild-type (wt): ' + str(homo_wt) + ' (' + str(round((100*(homo_wt/total_sample_count)),2))+'%)' +
@@ -2204,10 +2275,10 @@ with open(str(population_summary_output), 'a+') as file:
 # Log file processing time duration                
 fileprocessingDuration = str(datetime.now()- startTime_fileprocessing).split(':')[0]+' hr|'+str(datetime.now() - startTime_fileprocessing).split(':')[1]+' min|'+str(datetime.now() - startTime_fileprocessing).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_fileprocessing).split(':')[2].split('.')[1]+' microsec'
 
-# Optional: print supporting evidence (frequency metrics demonstrated in plots) for allele definitions & imputed genotypes to output file, allele_evidence.pdf
+# Optional: print supporting evidence (frequency metrics demonstrated in plots) for allele definitions & inferred genotypes to output file, allele_evidence.pdf
 if frequency_plot_check == 'Y':
     print("""
-Script is now compiling evidence for imputed genotypes in the form of allele frequency plots.""")
+Script is now compiling evidence for extrapolated genotypes in the form of allele frequency plots.""")
     frequency_plots()
 elif frequency_plot_check == 'N':
     pass
@@ -2237,7 +2308,7 @@ if frequency_plot_check == 'Y':
     start time: """+startTimestr+
     '\n    fasta processing time: '+readcountDuration+
     '\n    alignments processing time: '+alignmentsDuration+
-    '\n    imputation processing time: '+imputationDuration+
+    '\n    genotype inference processing time: '+imputationDuration+
     '\n    frequency plots compilation time: '+frequencyplotsDuration+
     '\n    accessory file processing time: '+fileprocessingDuration+
     '\n    total processing time: '+processingDuration+
@@ -2255,7 +2326,7 @@ elif frequency_plot_check == 'N':
     start time: """+startTimestr+
     '\n    fasta processing time: '+readcountDuration+
     '\n    alignments processing time: '+alignmentsDuration+
-    '\n    imputation processing time: '+imputationDuration+
+    '\n    genotype inference processing time: '+imputationDuration+
     '\n    accessory file processing time: '+fileprocessingDuration+
     '\n    total processing time: '+processingDuration+
     '\n    end time: ' + endTimestr, file = f)
