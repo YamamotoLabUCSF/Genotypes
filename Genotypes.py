@@ -2,7 +2,7 @@
 # Note: edit shebang line above as appropriate for your system
 # NAME: Kirk Ehmsen
 # FILE: Genotypes.py
-# DATE: 08-30-2018/08-02-2019
+# DATE: 08-30-2018/08-02-2019/12-15-2020
 # DESC: This script accepts text to standard input, and returns allele definitions for samples
 # from a demultiplexed NGS fastq dataset.
 # USAGE: ./Genotypes.py or python3 Genotypes.py
@@ -183,6 +183,9 @@ import numpy
 
 # SciPy (for percentile) 
 from scipy import stats
+
+# Statistics
+import statistics
 
 # Container datatypes (for Counter operation)
 from collections import Counter
@@ -1248,6 +1251,16 @@ startTime_readcount = datetime.now()
 # For each fastq file (sourcefile) in fastq_directory, count top 10 most abundant read types and direct read sequence + annotation defline (sample name + frequency metrics) to fasta.fa (future alignment input)
 query_input = Path(str(output_path)+'/'+processdate+'_fasta.fa')
 
+# define Nextera adaptor sequence, in preparation to trim read 3' ends if necessary
+adaptor_str = 'CTGTCTCTTATACACATCT'
+
+# define Phred score dictionary, in preparation to screen for reads with base quality scores <Q20
+Phred_dict = {'!':(1,0),'"':(0.79433,1),'#':(0.63096,2),'$':(0.50119,3),'%':(0.39811,4),'&':(0.31623,5),"'":(0.25119,6),'(':(0.19953,7),')':(0.15849,8),'*':(0.12589,9),'+':(0.12589,10),',':(0.07943,11),'-':(0.0631,12),'.':(0.05012,13),'/':(0.03981,14),'0':(0.03162,15),'1':(0.02512,16),'2':(0.01995,17),'3':(0.01585,18),'4':(0.01259,19),'5':(0.01,20),'6':(0.00794,21),'7':(0.00631,22),'8':(0.00501,23),'9':(0.00398,24),':':(0.00316,25),';':(0.00251,26),'<':(0.002,27),'=':(0.00158,28),'>':(0.00126,29),'?':(0.001,30),'@':(0.001,31),'A':(0.00063,32),'B':(0.0005,33),'C':(0.0004,34),'D':(0.00032,35),'E':(0.00025,36),'F':(0.0002,37),'G':(0.00016,38),'H':(0.00013,39),'I':(0.0001,40),'J':(0.00008,41),'K':(0.00006,42)}
+
+Phred_below_Q20 = ['!','"','#','$','%','&',"'",'(',')','*','+',',','-','.','/','0','1','2','3','4','5']
+
+phred_df = pd.DataFrame(columns=['fastaname','Discarded read (sequence)','Discarded read (phreds)','read length (bp)','# base calls <Q20','Qscore, range','Qscore, average (std)', 'Qscore, median', 'Error probability, range', 'Error probability, average (std)', 'Error probability, median'])
+
 for sourcefile in myFastqFilenames:
     fastaname = re.split('_', os.path.basename(sourcefile))
     # read all lines of fastq file into memory
@@ -1256,12 +1269,75 @@ for sourcefile in myFastqFilenames:
             lines = f.readlines()
     elif Path(sourcefile).suffix == ".fastq":
         with open(sourcefile, "r") as f:
-            lines = f.readlines()    
+            lines = f.readlines()
+    # read the sequences into a list, and the corresponding Phred quality scores into a separate list:
     read_lines = lines[1::4]
+    read_Phreds = lines[3::4]
     # remove \n character from each string item in list:
-    read_lines = map(str.strip, read_lines)
+    read_lines = list(map(str.strip, read_lines))
+    read_Phreds = list(map(str.strip, read_Phreds))
+    # strip adaptor sequence from 3' end of read, if necessary:
+    read_lines_trimmed = [read[:read.index(adaptor_str)] if adaptor_str in read else read for read in read_lines]
+    read_Phreds_trimmed = read_Phreds.copy()
+    # adjust Phred character string lengths to accomodate read lengths, if any read lengths adjusted by adaptor trimming
+    for index, read in enumerate(read_lines_trimmed):
+        if len(read) < len(read_Phreds_trimmed[index]):
+            read_Phreds_trimmed[index] = read_Phreds_trimmed[index][:len(read)]
+    # filter by quality scores if necessary, dropping reads with base calls <Q20
+    read_lines_trimmed_cleaned = read_lines_trimmed.copy()
+    read_Phreds_trimmed_cleaned = read_Phreds_trimmed.copy()
+
+    reads_to_remove_for_Q20_criteria = []
+    corresponding_phredlines_to_remove_for_Q20_criteria = []
+
+    for index, Phred_string in enumerate(read_Phreds_trimmed):
+        if any(phred in Phred_string for score in Phred_below_Q20):
+            read_length = len(Phred_string)
+            read_Phred_below_Q20_count = 0
+                # count # bases with base call <Q20
+            for phred in Phred_string:
+                if phred in Phred_below_Q20:
+                    read_Phred_below_Q20_count = read_Phred_below_Q20_count + 1
+                # gather list of Phred scores & error probabilities
+            read_Phred_all_Qscore_count = []
+            read_Phred_all_ErrorProbability_count = []
+            for phred in Phred_string:
+                read_Phred_all_Qscore_count.append(Phred_dict.get(phred)[1])
+                read_Phred_all_ErrorProbability_count.append(Phred_dict.get(phred)[0])
+                # calculate Qscore and error probability descriptive statistics for dropped reads
+            Qscore_range = [min(read_Phred_all_Qscore_count), max(read_Phred_all_Qscore_count)]
+            ErrorProbability_range = [min(read_Phred_all_ErrorProbability_count), max(read_Phred_all_ErrorProbability_count)]
+            Qscore_average_stdev = [statistics.mean(read_Phred_all_Qscore_count), statistics.stdev(read_Phred_all_Qscore_count)]
+            ErrorProbability_average_stdev = [statistics.mean(read_Phred_all_ErrorProbability_count), statistics.stdev(read_Phred_all_ErrorProbability_count)]
+            Qscore_median = statistics.median(read_Phred_all_Qscore_count)
+            ErrorProbability_median = statistics.median(read_Phred_all_ErrorProbability_count)
+                # check phred scores in sliding triplet window
+                # drop read if 3 consecutive bases <Q20 (add to dropped_reads_list)
+            triplet_Q20_criterion_met = False
+            for phred_triplet in Phred_string:
+            #for phred_triplet in [Phred_string[phred:phred+3] for phred in range(read_length -2)]:
+                if triplet_Q20_criterion_met is False:
+                    if all(phred in phred_triplet for score in Phred_below_Q20):
+                        dropped_reads_list = (fastaname, read_lines_trimmed[index], Phred_string, read_length, read_Phred_below_Q20_count, Qscore_range, Qscore_average_stdev, Qscore_median, ErrorProbability_range, ErrorProbability_average_stdev, ErrorProbability_median)
+                        triplet_Q20_criterion_met = True
+                # add data re: dropped read(s) to phred_df
+                        dropped_read_data = pd.Series(dropped_reads_list, index=phred_df.columns)
+                        phred_df = phred_df.append(dropped_read_data, ignore_index=True)
+                # add flagged read index to reads_to_remove_for_Q20_criteria
+                        reads_to_remove_for_Q20_criteria.append(index)
+                # add corresponding Phred string index to corresponding_phredlines_to_remove_for_Q20_criteria
+                        corresponding_phredlines_to_remove_for_Q20_criteria.append(index)
+                elif triplet_Q20_criterion_met is True:
+                    continue
+    # remove reads flagged as having bases with 3 consecutive quality scores <Q20
+    for index in sorted(reads_to_remove_for_Q20_criteria, reverse=True):
+        del read_lines_trimmed_cleaned[index]
+    # remove corresponding phred strings for reads flagged as having bases with 3 consecutive quality scores <Q20
+    for index in sorted(corresponding_phredlines_to_remove_for_Q20_criteria, reverse=True):
+        del read_Phreds_trimmed_cleaned[index]
+    
     # create dictionary (counter) relating unique read sequence to its # of occurrences
-    counter=Counter(read_lines)
+    counter=Counter(read_lines_trimmed_cleaned)
     # assign top 10 reads by count in fastq file (sourcefile) to modified_read_list_top10
     modified_read_list_top10 = []
     for i in counter.most_common(10):
