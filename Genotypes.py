@@ -1305,12 +1305,12 @@ for sourcefile in myFastqFilenames:
                 read_Phred_all_Qscore_count.append(Phred_dict.get(phred)[1])
                 read_Phred_all_ErrorProbability_count.append(Phred_dict.get(phred)[0])
                 # calculate Qscore and error probability descriptive statistics for dropped reads
-            Qscore_range = [min(read_Phred_all_Qscore_count), max(read_Phred_all_Qscore_count)]
-            ErrorProbability_range = [min(read_Phred_all_ErrorProbability_count), max(read_Phred_all_ErrorProbability_count)]
-            Qscore_average_stdev = [statistics.mean(read_Phred_all_Qscore_count), statistics.stdev(read_Phred_all_Qscore_count)]
-            ErrorProbability_average_stdev = [statistics.mean(read_Phred_all_ErrorProbability_count), statistics.stdev(read_Phred_all_ErrorProbability_count)]
-            Qscore_median = statistics.median(read_Phred_all_Qscore_count)
-            ErrorProbability_median = statistics.median(read_Phred_all_ErrorProbability_count)
+            Qscore_range = [round(min(read_Phred_all_Qscore_count),6), round(max(read_Phred_all_Qscore_count),6)]
+            ErrorProbability_range = [round(min(read_Phred_all_ErrorProbability_count),6), round(max(read_Phred_all_ErrorProbability_count),6)]
+            Qscore_average_stdev = [round(statistics.mean(read_Phred_all_Qscore_count),6), round(statistics.stdev(read_Phred_all_Qscore_count),6)]
+            ErrorProbability_average_stdev = [round(statistics.mean(read_Phred_all_ErrorProbability_count),6), round(statistics.stdev(read_Phred_all_ErrorProbability_count),6)]
+            Qscore_median = round(statistics.median(read_Phred_all_Qscore_count),6)
+            ErrorProbability_median = round(statistics.median(read_Phred_all_ErrorProbability_count),6)
                 # check phred scores in sliding triplet window
                 # drop read if 3 consecutive bases <Q20 (add to dropped_reads_list)
             triplet_Q20_criterion_met = False
