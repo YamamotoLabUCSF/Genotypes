@@ -65,7 +65,7 @@
 #
 #      ** optional (2 sequences: strings or lists of strings):
 #         * guide RNA sequence (in DNA representation, excluding PAM sequence)
-#         * test sequence (sub-sequence motif(s) of interest, to query whether lost or gained in allele(s))
+#         * sequence of interest (sub-sequence motif(s) of interest, to query whether lost or gained in allele(s); i.e., 'test sequence')
 
 # Output notes:
 # ==============================================
@@ -443,9 +443,9 @@ def allele_output(genotype_class):
                 if imputedgenotypes_dict.get(i)[n][3].get(seq) != 'None':
                     file.write('\n')
                     if seq in extant_seq:
-                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"5'-"+seq+"-3' (test sequence)\n")
+                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"5'-"+seq+"-3' (sequence of interest)\n")
                     elif seq in extant_seq_rev:
-                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (test sequence)\n")
+                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest sequence)\n")
                 elif imputedgenotypes_dict.get(i)[n][3].get(seq) == 'None':
                     file.write('\n')
             file.write('\n')
@@ -849,7 +849,7 @@ print("""
                  
               ** optional:
                  * guide RNA sequence (in DNA representation, excluding PAM sequence)
-                 * test sequence (sub-sequence motif(s) of interest, to query whether lost or gained in allele(s))
+                 * 'sequence of interest' (sub-sequence motif(s) of interest, to query whether lost or gained in allele(s); i.e., 'test sequence')
 
     """)
 
@@ -1808,9 +1808,9 @@ with open(str(allele_definitions_output), 'a+') as file:
                     if imputedgenotypes_dict.get(i)[n][3].get(seq) != 'None':
                         file.write('\n')
                         if seq in extant_seq:
-                            file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"5'-"+seq+"-3' (test sequence)\n")
+                            file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"5'-"+seq+"-3' (sequence of interest)\n")
                         elif seq in extant_seq_rev:
-                            file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (test sequence)\n")
+                            file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest)\n")
                     elif imputedgenotypes_dict.get(i)[n][3].get(seq) == 'None':
                         file.write('\n')
                 file.write('\n')
