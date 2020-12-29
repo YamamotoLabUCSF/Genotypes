@@ -26,7 +26,7 @@
 # ==============================================
 # This script accepts text to standard input, and returns allele definitions (and extrapolated genotypes) for samples
 # from a demultiplexed NGS fastq dataset. Required: Python 3.7.0 or higher + 3rd-party libraries NumPy, SciPy, psutil,
-# fdpf, PyPDF2; BLASTN (NCBI) locally installed
+# fdpf, PyPDF2; BLASTN & BLASTDBCMD (NCBI) locally installed
 # What does this script do?
 # 1. counts reads per well/sample (sample defined by fastq file); fastq file name provides the sample name
 # 2. identifies the top 10 reads per well (in terms of read abundance), and calculates representation among reads within the well at four levels:
@@ -50,8 +50,8 @@
 
 # Input notes:
 # ==============================================
-# You will be prompted for the following user-specific information (up to 7 inputs; 5 required):
-#      ** required (4 directory paths):
+# You will be prompted for the following user-specific information (up to 8 inputs; 6 required):
+#      ** required (5 directory paths):
 #         * where should output files go?                                 path to output directory for output files
 #         * where are input files found?                                  path to single directory containing
 #                                                                           demultiplexed fastq files
@@ -60,6 +60,7 @@
 #                                                                           that compose the reference sequence database
 #                                                                           for BLASTN alignments
 #                                                                           (.nhr, .nin, .nog, .nsd, .nsi, .nsg)
+#         * where is BLASTDBCMD executable found?                         path to BLASTDBCMD installation
 #      ** required (1 string):
 #         * what prefix is shared among all six BLASTN reference sequence alignment database files?
 #
@@ -152,6 +153,9 @@ if len(missing_dependencies_list) > 0:
 # Operating system interfaces
 import os
 
+# import subprocess management
+import subprocess
+
 # Time access and conversions, Basic data and time types
 import time
 from datetime import datetime
@@ -223,6 +227,7 @@ def prompts():
     global blastn_path
     global db_path
     global db_prefix
+    global blastdbcmd_path
     global guideRNA_seq
     global extant_seq
     global test_seq
@@ -334,7 +339,19 @@ def prompts():
     
     Please indicate the common prefix for files of the reference sequence database."""+'\n')
     db_prefix = input(r"""    -----> Prefix for alignment reference sequence database files:  """)
-    # 6-Specify whether to include sequence(s) of interest to query in alignment outputs.
+    # 6-Collect path to BLASTDBCMD executable.
+    print("""
+    ---------------------------------
+    Location of BLASTDBCMD EXECUTABLE
+    ---------------------------------
+
+    This script uses BLASTDBCMD (NCBI) to retrieve DNA sequence spans between coordinates in a reference sequence database* (such as a genome database or sequence database) (*in cases where BLASTN has split an alignment into >1 local hit or high-scoring pair (hsp)).
+    Please indicate the absolute path to the BLASTDBCMD executable.
+    
+    Example: if your BLASTDBCMD executable is found at absolute path /Users/myname/blastdbcmd, type '/Users/myname/blastdbcmd'
+    and press Enter."""+'\n')
+    blastdbcmd_path = input(r"""    -----> Path to BLASTDBCMD executable:  """) 
+    # 7-Specify whether to include sequence(s) of interest to query in alignment outputs.
     print("""      
     -----------------------------------------------------------------
     Optional: Nucleotide sequence(s) to identify in output alignments
@@ -342,7 +359,7 @@ def prompts():
     
     Some applications of 'allele definition' and 'genotype inference' may call for identification of the presence
     or absence of a specific anticipated sub-sequence (few nucleotides), and/or for the mapping of the location of
-    a sub-sequence if present in the sequence alignment.
+    a sub-sequence if present in the sequence alignment ('sequence of interest').
     
     Genotypes.py allows for the optional testing of sub-sequences.
     
@@ -354,7 +371,7 @@ def prompts():
     --------------------------------------------------------------------------------------------------
     Nucleotide sequence(s): guide RNA annealing sites and/or test for presence/absence of sub-sequence
     --------------------------------------------------------------------------------------------------""")
-        # 6a-Collect guide RNA sequence details.
+        # 7a-Collect guide RNA sequence details.
         print("""
     ............................................................
     ***** guide RNA details: specify guide RNA sequence(s) *****
@@ -372,7 +389,7 @@ def prompts():
       If you have two guide RNA sequences and they are 'ATCCAGTTCTCCAGTCTCCC' and 'GCGAGCTCGTGTCTGTGACG',
       enter: 'ATCCAGTTCTCCAGTCTCCC, GCGAGCTCGTGTCTGTGACG'."""+'\n')
         guideRNA_seq = input(r"""    -----> guide RNA sequence(s):  """)
-        # 6b-Collect sub-sequence details (extant in allele or not?).
+        # 7b-Collect sub-sequence details (extant in allele or not?).
         print("""
     ......................................................................................
     ***** query DNA sequence(s): specify sequence(s) to test for presence or absence *****
@@ -401,10 +418,10 @@ def allele_output(genotype_class):
         read_checklist = []
         read_abundance_checklist = []
         for n in range(1, len(imputedgenotypes_dict.get(i))):
-            if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1':
-                if 'R1' not in read_checklist:
-                    read_checklist.append('R1')
-                    file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 |\n'+3*' '+'*'+8*'~'+'*\n\n')
+            if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1+R2':
+                if 'R1+R2' not in read_checklist:
+                    read_checklist.append('R1+R2')
+                    file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 + READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
                 else:
                     pass
                 if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
@@ -790,7 +807,27 @@ def frequency_plots():
             pass  
 # Log frequency plotting time duration
     frequencyplotsDuration = str(datetime.now()- startTime_frequencyplots).split(':')[0]+' hr|'+str(datetime.now() - startTime_frequencyplots).split(':')[1]+' min|'+str(datetime.now() - startTime_frequencyplots).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_frequencyplots).split(':')[2].split('.')[1]+' microsec'
-            
+
+# Define 'merge' function to merge R1 & R2 reads
+def merge(s1, s2):
+    i = 0
+    while not s2.startswith(s1[i:]):
+        i += 1
+    if i < len(s2):
+        return s1[:i] + s2
+    else:
+        return 'no overlap'
+      
+# Define 'merge1' function to append two strings that do not overlap
+def merge1(s1, s2):
+    i = 0
+    while not s2.startswith(s1[i:]):
+        i += 1
+    return s1[:i] + s2
+
+# Define nt complement dictionary      
+nt_dict = {'A':'T', 'T':'A', 'G':'C', 'C':'G', 'N':'N', '-':'-'}    
+    
 # Define 'convert_bytes' and 'path_size' functions to be used in data collection for script_metrics.txt
 def convert_bytes(num):
     """
@@ -846,6 +883,7 @@ print("""
                                                                           for BLASTN alignments
                                                                           (.nhr, .nin, .nog, .nsd, .nsi, .nsg)
                  * what prefix is shared by the BLASTN alignment database files?
+                 * where is BLASTDBCMD executable found?                path to BLASTDBCMD installation
                  
               ** optional:
                  * guide RNA sequence (in DNA representation, excluding PAM sequence)
@@ -906,8 +944,9 @@ elif user_input == 'List':
     3-Location of BLASTN EXECUTABLE
     4-Location of BLASTN ALIGNMENT DATABASE DIRECTORY
     5-Prefix common to BLASTN sequence database files
-    6-Optional guide RNA sequence(s) to identify in output alignments
-    7-Optional sub-sequence(s) to identify in output alignments
+    6-Location of BLASTDBCMD EXECUTABLE
+    7-Optional guide RNA sequence(s) to identify in output alignments
+    8-Optional sub-sequence(s) to identify in output alignments
 
     """)
             input_list = []
@@ -923,23 +962,25 @@ elif user_input == 'List':
             blastn_path = input_list[2].strip()
             db_path = input_list[3].strip()
             db_prefix = input_list[4].strip()
-            guideRNA_seq = [i.strip() for i in input_list[5].split(',')]
-            extant_seq = [i.strip() for i in input_list[6].split(',')]
+            blastdbcmd_path = input_list[5].strip()
+            guideRNA_seq = [i.strip() for i in input_list[6].split(',')]
+            extant_seq = [i.strip() for i in input_list[7].split(',')]
         elif user_input2 == 'Yes' and user_input3 == 'No':
             print(r"""
     ----------------------------------
     User-specified input (list format)
     ----------------------------------
     
-    Please paste a single list of input values directly at the command line prompt, specifying the following 6 values.
+    Please paste a single list of input values directly at the command line prompt, specifying the following 7 values.
     Press 'Enter' twice to complete.
     
     1-Location of OUTPUT DIRECTORY for output files
     2-Location of INPUT FILES (directory containing fastq files)
     3-Location of BLASTN EXECUTABLE
     4-Location of BLASTN ALIGNMENT DATABASE DIRECTORY
-    5-Prefix common to BLASTN sequence database files
-    6-Optional guide RNA sequence(s) to identify in output alignments
+    5-Location of BLASTDBCMD EXECUTABLE
+    6-Prefix common to BLASTN sequence database files
+    7-Optional guide RNA sequence(s) to identify in output alignments
     
     """)
             input_list = []
@@ -955,14 +996,15 @@ elif user_input == 'List':
             blastn_path = input_list[2].strip()
             db_path = input_list[3].strip()
             db_prefix = input_list[4].strip()
-            guideRNA_seq = [i.strip() for i in input_list[5].split(',')]
+            blastdbcmd_path = input_list[5].strip()
+            guideRNA_seq = [i.strip() for i in input_list[6].split(',')]
         elif user_input2 == 'No' and user_input3 == 'Yes':
             print(r"""
     ----------------------------------
     User-specified input (list format)
     ----------------------------------
     
-    Please paste a single list of input values directly at the command line prompt, specifying the following 6 values.
+    Please paste a single list of input values directly at the command line prompt, specifying the following 7 values.
     Press 'Enter' twice to complete.
     
     1-Location of OUTPUT DIRECTORY for output files
@@ -970,7 +1012,8 @@ elif user_input == 'List':
     3-Location of BLASTN EXECUTABLE
     4-Location of BLASTN ALIGNMENT DATABASE DIRECTORY
     5-Prefix common to BLASTN sequence database files
-    6-Optional sub-sequence(s) to identify in output alignments
+    6-Location of BLASTDBCMD EXECUTABLE
+    7-Optional sub-sequence(s) to identify in output alignments
     
     """)  
             input_list = []
@@ -986,14 +1029,15 @@ elif user_input == 'List':
             blastn_path = input_list[2].strip()
             db_path = input_list[3].strip()
             db_prefix = input_list[4].strip()
-            extant_seq = [i.strip() for i in input_list[5].split(',')]
+            blastdbcmd_path = input_list[5].strip()
+            extant_seq = [i.strip() for i in input_list[6].split(',')]
     elif test_seq == 'No':
         print(r"""
     ----------------------------------
     User-specified input (list format)
     ----------------------------------
     
-    Please paste a single list of input values directly at the command line prompt, specifying the following 5 values.
+    Please paste a single list of input values directly at the command line prompt, specifying the following 6 values.
     Press 'Enter' twice to complete.
     
     1-Location of OUTPUT DIRECTORY for output files
@@ -1001,6 +1045,7 @@ elif user_input == 'List':
     3-Location of BLASTN EXECUTABLE
     4-Location of BLASTN ALIGNMENT DATABASE DIRECTORY
     5-Prefix common to BLASTN sequence database files
+    6-Location of BLASTDBCMD EXECUTABLE
     
     """)  
         input_list = []
@@ -1016,6 +1061,7 @@ elif user_input == 'List':
         blastn_path = input_list[2].strip()
         db_path = input_list[3].strip()
         db_prefix = input_list[4].strip()
+        blastdbcmd_path = input_list[5].strip()
 
 # Wait to create the directories and files until after input has been reviewed and accepted.
 # Convert fastq_directory input to operating system-appropriate filepath.
@@ -1026,6 +1072,8 @@ fastq_directory = Path(str(fastq_directory))
 blastn_path = Path(str(blastn_path))
 # Convert db_path input to operating system-appropriate filepath.
 db_path = Path(str(db_path))
+# Convert blastdbcmd_path input to operating system-appropriate filepath.
+blastdbcmd_path = Path(str(blastdbcmd_path))
 
 # Collect fastq files from directory
 myFastqFilenames = [file for file in glob.glob(str(fastq_directory)+'/*') if Path(file).suffix in [".gz",".fastq"]]
@@ -1130,6 +1178,11 @@ Your PREFIX common to BLASTN ALIGNMENT DATABASE FILES was recorded as:
 """)
 print(db_prefix)
 
+print("""
+Your BLASTDBCMD EXECUTABLE location was recorded as:
+""")
+print(str(blastdbcmd_path))
+
 if test_seq == 'Yes':
     print("""
 Your DNA sub-sequences were recorded as:
@@ -1215,7 +1268,8 @@ with open(filename, 'a') as f:
 "\n    fastq_directory: "+ str(fastq_directory) +
 "\n    blastn_path: "+ str(blastn_path) +
 "\n    db_path: "+ str(db_path) +
-"\n    db_prefix: "+ db_prefix, file = f)
+"\n    db_prefix: "+ db_prefix, file = f +
+"\n    blastdbcmd_path: "+ str(blastdbcmd_path))
     try:
         guideRNA_seq
     except NameError:
@@ -1253,91 +1307,77 @@ query_input = Path(str(output_path)+'/'+processdate+'_fasta.fa')
 
 # define Nextera adaptor sequence, in preparation to trim read 3' ends if necessary
 adaptor_str = 'CTGTCTCTTATACACATCT'
+adaptor_str_rev = 'AGATGTGTATAAGAGACAG'
 
-# define Phred score dictionary, in preparation to screen for reads with base quality scores <Q20
-Phred_dict = {'!':(1,0),'"':(0.79433,1),'#':(0.63096,2),'$':(0.50119,3),'%':(0.39811,4),'&':(0.31623,5),"'":(0.25119,6),'(':(0.19953,7),')':(0.15849,8),'*':(0.12589,9),'+':(0.12589,10),',':(0.07943,11),'-':(0.0631,12),'.':(0.05012,13),'/':(0.03981,14),'0':(0.03162,15),'1':(0.02512,16),'2':(0.01995,17),'3':(0.01585,18),'4':(0.01259,19),'5':(0.01,20),'6':(0.00794,21),'7':(0.00631,22),'8':(0.00501,23),'9':(0.00398,24),':':(0.00316,25),';':(0.00251,26),'<':(0.002,27),'=':(0.00158,28),'>':(0.00126,29),'?':(0.001,30),'@':(0.001,31),'A':(0.00063,32),'B':(0.0005,33),'C':(0.0004,34),'D':(0.00032,35),'E':(0.00025,36),'F':(0.0002,37),'G':(0.00016,38),'H':(0.00013,39),'I':(0.0001,40),'J':(0.00008,41),'K':(0.00006,42)}
-
-Phred_below_Q20 = ['!','"','#','$','%','&',"'",'(',')','*','+',',','-','.','/','0','1','2','3','4','5']
-
-phred_df = pd.DataFrame(columns=['fastaname','Discarded read (sequence)','Discarded read (phreds)','read length (bp)','# base calls <Q20','Qscore, range','Qscore, average (std)', 'Qscore, median', 'Error probability, range', 'Error probability, average (std)', 'Error probability, median'])
-
-for sourcefile in myFastqFilenames:
-    fastaname = re.split('_', os.path.basename(sourcefile))
-    # read all lines of fastq file into memory
-    if Path(sourcefile).suffix == ".gz":
-        with gzip.open(sourcefile, "rt") as f:
-            lines = f.readlines()
-    elif Path(sourcefile).suffix == ".fastq":
-        with open(sourcefile, "r") as f:
-            lines = f.readlines()
-    # read the sequences into a list, and the corresponding Phred quality scores into a separate list:
-    read_lines = lines[1::4]
-    read_Phreds = lines[3::4]
-    # remove \n character from each string item in list:
-    read_lines = list(map(str.strip, read_lines))
-    read_Phreds = list(map(str.strip, read_Phreds))
-    # strip adaptor sequence from 3' end of read, if necessary:
-    read_lines_trimmed = [read[:read.index(adaptor_str)] if adaptor_str in read else read for read in read_lines]
-    read_Phreds_trimmed = read_Phreds.copy()
-    # adjust Phred character string lengths to accomodate read lengths, if any read lengths adjusted by adaptor trimming
-    for index, read in enumerate(read_lines_trimmed):
-        if len(read) < len(read_Phreds_trimmed[index]):
-            read_Phreds_trimmed[index] = read_Phreds_trimmed[index][:len(read)]
-    # filter by quality scores if necessary, dropping reads with base calls <Q20
-    read_lines_trimmed_cleaned = read_lines_trimmed.copy()
-    read_Phreds_trimmed_cleaned = read_Phreds_trimmed.copy()
-
-    reads_to_remove_for_Q20_criteria = []
-    corresponding_phredlines_to_remove_for_Q20_criteria = []
-
-    for index, Phred_string in enumerate(read_Phreds_trimmed):
-        if any(phred in Phred_string for score in Phred_below_Q20):
-            read_length = len(Phred_string)
-            read_Phred_below_Q20_count = 0
-                # count # bases with base call <Q20
-            for phred in Phred_string:
-                if phred in Phred_below_Q20:
-                    read_Phred_below_Q20_count = read_Phred_below_Q20_count + 1
-                # gather list of Phred scores & error probabilities
-            read_Phred_all_Qscore_count = []
-            read_Phred_all_ErrorProbability_count = []
-            for phred in Phred_string:
-                read_Phred_all_Qscore_count.append(Phred_dict.get(phred)[1])
-                read_Phred_all_ErrorProbability_count.append(Phred_dict.get(phred)[0])
-                # calculate Qscore and error probability descriptive statistics for dropped reads
-            Qscore_range = [round(min(read_Phred_all_Qscore_count),6), round(max(read_Phred_all_Qscore_count),6)]
-            ErrorProbability_range = [round(min(read_Phred_all_ErrorProbability_count),6), round(max(read_Phred_all_ErrorProbability_count),6)]
-            Qscore_average_stdev = [round(statistics.mean(read_Phred_all_Qscore_count),6), round(statistics.stdev(read_Phred_all_Qscore_count),6)]
-            ErrorProbability_average_stdev = [round(statistics.mean(read_Phred_all_ErrorProbability_count),6), round(statistics.stdev(read_Phred_all_ErrorProbability_count),6)]
-            Qscore_median = round(statistics.median(read_Phred_all_Qscore_count),6)
-            ErrorProbability_median = round(statistics.median(read_Phred_all_ErrorProbability_count),6)
-                # check phred scores in sliding triplet window
-                # drop read if 3 consecutive bases <Q20 (add to dropped_reads_list)
-            triplet_Q20_criterion_met = False
-            for phred_triplet in Phred_string:
-            #for phred_triplet in [Phred_string[phred:phred+3] for phred in range(read_length -2)]:
-                if triplet_Q20_criterion_met is False:
-                    if all(phred in phred_triplet for score in Phred_below_Q20):
-                        dropped_reads_list = (fastaname, read_lines_trimmed[index], Phred_string, read_length, read_Phred_below_Q20_count, Qscore_range, Qscore_average_stdev, Qscore_median, ErrorProbability_range, ErrorProbability_average_stdev, ErrorProbability_median)
-                        triplet_Q20_criterion_met = True
-                # add data re: dropped read(s) to phred_df
-                        dropped_read_data = pd.Series(dropped_reads_list, index=phred_df.columns)
-                        phred_df = phred_df.append(dropped_read_data, ignore_index=True)
-                # add flagged read index to reads_to_remove_for_Q20_criteria
-                        reads_to_remove_for_Q20_criteria.append(index)
-                # add corresponding Phred string index to corresponding_phredlines_to_remove_for_Q20_criteria
-                        corresponding_phredlines_to_remove_for_Q20_criteria.append(index)
-                elif triplet_Q20_criterion_met is True:
-                    continue
-    # remove reads flagged as having bases with 3 consecutive quality scores <Q20
-    for index in sorted(reads_to_remove_for_Q20_criteria, reverse=True):
-        del read_lines_trimmed_cleaned[index]
-    # remove corresponding phred strings for reads flagged as having bases with 3 consecutive quality scores <Q20
-    for index in sorted(corresponding_phredlines_to_remove_for_Q20_criteria, reverse=True):
-        del read_Phreds_trimmed_cleaned[index]
+# proceed to R1+R2 merge, unique read identification & counting
     
+# Merge R1 and R2 reads, if present, as single sequence
+R1_file_list = [sourcefile for sourcefile in myFastqFilenames if bool(re.split('_',os.path.basename(sourcefile))[3] == 'R1')]
+R2_file_list = [sourcefile for sourcefile in myFastqFilenames if bool(re.split('_',os.path.basename(sourcefile))[3] == 'R2')]
+      
+# R1, R2 cluster mapping (identify fastq file pairs representing R1 & R2 data for individual clusters)
+processed_files_list = []
+R1_R2_map_list = []
+for sourcefile in myFastqFilenames:
+    if sourcefile in processed_files_list:
+        pass
+    else:
+        testname = ''.join(re.split('_',os.path.basename(sourcefile))[0:3])
+        for sourcefile1 in R1_file_list:
+            if testname == ''.join(re.split('_',os.path.basename(sourcefile1))[0:3]):
+                R1 = sourcefile
+                if sourcefile not in processed_files_list:
+                    processed_files_list.append(sourcefile)
+        for sourcefile2 in R2_file_list:
+            if testname == ''.join(re.split('_',os.path.basename(sourcefile2))[0:3]):
+                R2 = sourcefile2
+                if sourcefile2 not in processed_files_list:
+                    processed_files_list.append(sourcefile2)
+        R1_R2_map_list.append((R1, R2))
+        
+for file_pair in R1_R2_map_list:
+    R1_file = file_pair[0]
+    R2_file = file_pair[1]
+    fastaname = re.split('_', os.path.basename(R1_file))
+    cluster_sequence_R1_dict = {}
+    cluster_sequence_R2_dict = {}
+    cluster_sequence_R2_revcomp_dict = {}
+    cluster_merged_R1_R2revcomp_dict = {}
+    cluster_merged_R1_R2revcomp_dict2 = {}
+    merged_read_list = []
+    counter=()
+    if Path(R1_file).suffix == ".gz":
+        with gzip.open(R1_file, "rt") as f:
+            lines_R1 = f.readlines()
+    elif Path(R1_file).suffix == ".fastq":
+        with open(R1_file, 'r') as f:
+            lines_R1 = f.readlines()    
+    for x in range(0,len(lines_R1),4):
+        # trim adaptor sequence and up to 3' end of read from R1 sequence, if adaptor sequence found
+        cluster_sequence_R1_dict[lines_R1[x].split(':')[5]+':'+lines_R1[x].split(':')[6].split(' ')[0]] = lines_R1[x+1].strip('\n')[:lines_R1[x+1].strip('\n').index(adaptor_str)] if adaptor_str in lines_R1[x+1].strip('\n') else lines_R1[x+1].strip('\n') 
+    #cluster_IDs_list_R1 = [x.split(':')[5]+':'+x.split(':')[6].split(' ')[0] for x in lines_R1[0::4]]
+    if Path(R2_file).suffix == ".gz":
+        with gzip.open(R2_file, "rt") as f:
+            lines_R2 = f.readlines()
+    elif Path(R2_file).suffix == ".fastq":
+        with open(R2_file, 'r') as f:
+            lines_R2 = f.readlines()
+    for x in range(0,len(lines_R2),4):
+        # trim adaptor sequence and up to 3' end of read from R2 sequence, if adaptor sequence found
+        cluster_sequence_R2_dict[lines_R2[x].split(':')[5]+':'+lines_R2[x].split(':')[6].split(' ')[0]] = lines_R2[x+1].strip('\n')[:lines_R2[x+1].strip('\n').index(adaptor_str)] if adaptor_str in lines_R2[x+1].strip('\n') else lines_R2[x+1].strip('\n') 
+    #cluster_IDs_list_R2 = [x.split(':')[5]+':'+x.split(':')[6].split(' ')[0] for x in lines_R2[0::4]]
+    for cluster in cluster_sequence_R2_dict:
+        cluster_sequence_R2_revcomp_dict[cluster] = ''.join(reversed(''.join(nt_dict.get(nt) for nt in cluster_sequence_R2_dict.get(cluster))))
+    for cluster in cluster_sequence_R1_dict:
+        if cluster in cluster_sequence_R2_revcomp_dict:
+            if merge(cluster_sequence_R1_dict.get(cluster), cluster_sequence_R2_revcomp_dict.get(cluster)) != 'no overlap':
+                cluster_merged_R1_R2revcomp_dict[cluster] = merge(cluster_sequence_R1_dict.get(cluster), cluster_sequence_R2_revcomp_dict.get(cluster))
+            else:
+                cluster_merged_R1_R2revcomp_dict2[cluster] = merge1(cluster_sequence_R1_dict.get(cluster), cluster_sequence_R2_revcomp_dict.get(cluster))
+    for cluster in cluster_merged_R1_R2revcomp_dict:
+        merged_read_list.append(cluster_merged_R1_R2revcomp_dict.get(cluster))
     # create dictionary (counter) relating unique read sequence to its # of occurrences
-    counter=Counter(read_lines_trimmed_cleaned)
+    counter=Counter(merged_read_list)
     # assign top 10 reads by count in fastq file (sourcefile) to modified_read_list_top10
     modified_read_list_top10 = []
     for i in counter.most_common(10):
@@ -1351,7 +1391,7 @@ for sourcefile in myFastqFilenames:
     # direct output in fasta format (with defline encoding sample name + frequency metrics) to fasta.fa
     with open(str(query_input), 'a+') as file:
         for i in modified_read_list_top10:
-            file.write('>'+fastaname[0]+'_'+fastaname[3]+'_'+str(i[1])+'_%totalreads:'+str(i[2])+'_percentile:'+str(i[3])+'_%top10reads:'+str(i[4])+'_%readsfilteredfor1%:'+str(i[5])+'_%readsfilteredfor10%:'+str(i[6])+'\n'+i[0]+'\n')
+            file.write('>'+fastaname[0]+'_'+'R1+R2'+'_'+str(i[1])+'_%totalreads:'+str(i[2])+'_percentile:'+str(i[3])+'_%top10reads:'+str(i[4])+'_%readsfilteredfor1%:'+str(i[5])+'_%readsfilteredfor10%:'+str(i[6])+'\n'+i[0]+'\n')
 
 # Log read count time duration
 readcountDuration = str(datetime.now()- startTime_readcount).split(':')[0]+' hr|'+str(datetime.now() - startTime_readcount).split(':')[1]+' min|'+str(datetime.now() - startTime_readcount).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_readcount).split(':')[2].split('.')[1]+' microsec'
@@ -1403,15 +1443,6 @@ for i in alignments_list2:
     if re.search('No hits found', str(i)):
         no_hits_list.append(str(i).split('<Iteration_query-def>')[1].split('</Iteration_query-def>')[0])
 
-# Further subset 'No hits found' queries for R1 vs. R2
-no_hits_R1_read_list = []
-no_hits_R2_read_list = []
-for i in no_hits_list:
-    if i.split('_')[1] == 'R1':
-        no_hits_R1_read_list.append(i.split('_')[0]+' '+i.split('_')[2]+' '+i.split('_')[3].split(':')[1]+'%')
-    elif i.split('_')[1] == 'R2':
-        no_hits_R2_read_list.append(i.split('_')[0]+' '+i.split('_')[2]+' '+i.split('_')[3].split(':')[1]+'%')
-
 # Record sample names having reads with no alignment hits
 no_hits_samplename_list = []
 for i in no_hits_list:
@@ -1423,36 +1454,226 @@ for i in no_hits_list:
 alignments_list3 = []
 for i in alignments_list2:
     if str(i).split('<Iteration_query-def>')[1].split('</Iteration_query-def>')[0] not in no_hits_list:
-        alignments_list3.append([y.strip() for x in i for y in x.split('\n') if y.strip().startswith(('<Iteration_query-ID>', '<Iteration_query-def>', '<Hit_num>', '<Hit_id>', '<Hit_def>', '<Hsp_hit-from>', '<Hsp_hit-to>', '<Hsp_qseq>', '<Hsp_hseq>', '<Hsp_midline>'))])
+        alignments_list3.append([y.strip() for x in i for y in x.split('\n') if y.strip().startswith(('<Iteration_query-ID>', '<Iteration_query-def>', '<Hit_num>', '<Hit_id>', '<Hit_def>', '<Hit_accession>', '<Hsp_num>', '<Hsp_hit-from>', '<Hsp_hit-to>', '<Hsp_qseq>', '<Hsp_hseq>', '<Hsp_midline>'))])
     
 # Identify & subset reads with >1 alignment to sequences in reference database
-multiple_alignments_list = []
+# Some reads with >1 alignment will be recovered to 'reconstitute' hypothesized allele (if BLASTN has split the read into multiple 'hits' or 'high-scoring pairs' (hsp's) within 1 kb)
+
+# There are in principle at least 3 ways a read could potentially align to >1 position in reference database (1 & 2a,b below):
+# (1) same sequence span aligns to >1 different locus (disparate <Hit_id>'s)
+# (2) one sequence span may be split into two (ore more) different alignment matches, because of intervening gap(s) or insertion(s) that exceed ~60 bp (an apparent BLASTN gap limit)
+#    (a) if the two (or more) 'split matches' align to the same <Hit_id>, but to different chromosomal coordinates of that <Hit_id>, they will be presented by BLASTN as belonging to the same <Hit_num>, but to different <Hsp_num> (Hsp=high scoring pair)
+#    (b) if the two (or more) 'split matches' span different <Hit_id>'s (essentially different 'chunks' of sequence with unique names, as organized within the alignment database), they will be presented by BLASTN as belonging to different <Hit_num>
+# These observations suggest that it is important to distinguish a read with alignment to >1 sequence as either one with poor genomic target resolution, vs. one that harbors sizeable deletions or insertions relative to the reference sequence
+# One way to make this distinction may be to gauge how close in chromosomal space the >1 alignments are to one another, and assume their continuity if their proximity falls within a defined constraint.  Genotypes.py assigns this constraint to be 1000 bp (1kb).
+
+# Organize reads with multiple hit IDs
+# These reads are deprecated (not further analyzed)
+multiple_alignments_hits_list = []
 for i in alignments_list3:
     if len(re.findall('<Hit_num>', str(i))) > 1:
-        multiple_alignments_list.append(i)
+        multiple_alignments_hits_list.append(i)
+        
+# Organize reads with single hit, but multiple associated hsp IDs
+# These reads will be processed by BLASTDBCMD in an effort to 'reconstitute' potential alleles, with high-scoring alignment pairs matched to the reference genome, but split into separate matches due to intervening non-aligning span between the alignment matches
+multiple_alignments_hsp_list = []
+for i in alignments_list3:
+    if len(re.findall('<Hit_num>', str(i))) > 1:
+        pass
+    elif len(re.findall('<Hsp_num>', str(i))) > 1:
+        multiple_alignments_hsp_list.append(i)
 
-# Identify read IDs with >1 alignment to sequences in reference database
-multiple_alignments_readID_list = []
-for i in multiple_alignments_list:
-    multiple_alignments_readID_list.append(i[1].split('>')[1].split('<')[0])
+# Identify read IDs with >1 alignment to sequences in reference database (hit class)
+# Note, in Genotypes.py v1.0, these reads are deprecated at this time (in step just prior)
+multiple_alignments_hits_readID_list = []
+for i in multiple_alignments_hits_list:
+    multiple_alignments_hits_readID_list.append(i[1].split('>')[1].split('<')[0])
 
-# Record sample names having reads with >1 alignment to sequences in reference database
-multiple_alignments_samplename_list = []
-for i in multiple_alignments_readID_list:
+# Identify read IDs with >1 alignment to sequences in reference database (hsp class)
+multiple_alignments_hsp_readID_list = []
+for i in multiple_alignments_hsp_list:
+    multiple_alignments_hsp_readID_list.append(i[1].split('>')[1].split('<')[0])
+
+# Record sample names having reads with >1 alignment to sequences in reference database (hit class)
+multiple_alignments_hits_samplename_list = []
+for i in multiple_alignments_hits_readID_list:
     samplename = i.split('_')[0]
-    if samplename not in multiple_alignments_samplename_list:
-        multiple_alignments_samplename_list.append(samplename)
+    if samplename not in multiple_alignments_hits_samplename_list:
+        multiple_alignments_hits_samplename_list.append(samplename)
+        
+# Record sample names having reads with >1 alignment to sequences in reference database (hsp class)
+multiple_alignments_hsp_samplename_list = []
+for i in multiple_alignments_hsp_readID_list:
+    samplename = i.split('_')[0]
+    if samplename not in multiple_alignments_hsp_samplename_list:
+        multiple_alignments_hsp_samplename_list.append(samplename)
 
-# Prepare dictionary linking sample names to their reads having >1 alignment to sequences in reference database
-multiple_alignments_dict = {}
-for i in multiple_alignments_samplename_list:
-    multiple_alignments_dict ["{0}".format(i)] = tuple(x for x in multiple_alignments_list if bool(re.search(i, x[1])))
+# Prepare dictionary linking sample names to their reads having >1 alignment to sequences in reference database (hit class)
+multiple_alignments_hits_dict = {}
+for i in multiple_alignments_hits_samplename_list:
+    multiple_alignments_hits_dict["{0}".format(i)] = tuple(x for x in multiple_alignments_hits_list if bool(re.search(i, x[1])))
+    
+# Prepare dictionary linking sample names to their reads having >1 alignment to sequences in reference database (hsp class)
+multiple_alignments_hsp_dict = {}
+for i in multiple_alignments_hsp_samplename_list:
+    multiple_alignments_hsp_dict["{0}".format(i)] = tuple(x for x in multiple_alignments_hsp_list if bool(re.search(i, x[1])))
+    
+# Not all top 10 ranked alleles for every sample will be subject to a multiple-hsp search; will need to keep track of this, to regroup allele alignments for individual samples at later step (i.e., regroup and print by rank alleles that have been reconstituted by BLASTDBCMD as well as alleles that did not require reconstitution)
+
+# For reads that have hsp's that overlap with one another, it is unclear how best to reconstitute an alignment; discard these reads from further analysis
+
+multiple_alignments_hsp_dict_valid = {}
+for i in multiple_alignments_hsp_dict:
+    valid_hsp_reads_list = []
+    for x in multiple_alignments_hsp_dict.get(i):
+        hsp_id_list = x[6::6]
+        hsp_from_to_list = []
+        hsp_sequence_identifier = x[5]
+        # assign sequence identifier
+        for hsp in hsp_id_list:
+            hsp_index = x.index(hsp)
+            hsp_from_to_list.append((x[hsp_index+1], x[hsp_index+2]))
+        # check whether hsp spans overlap; if they do, discard read
+        coordinate_range_subset_list = []
+        for index, span in enumerate(hsp_from_to_list):
+            coordinate_range_subset = [int(span[0].split('>')[1].split('<')[0])]+[int(span[1].split('>')[1].split('<')[0])]
+            coordinate_range_subset_list.append(coordinate_range_subset)
+        coordinate_range_subset_list_expanded = [range(coordinate_range_subset[0],coordinate_range_subset[1]) for coordinate_range_subset in coordinate_range_subset_list]
+        # set default overlap validity to True (no hsp overlaps)
+        valid_hsp_overlap = True
+        for y in coordinate_range_subset_list_expanded:
+            coordinate_range_subset_list_expanded_copy = coordinate_range_subset_list_expanded.copy()
+            coordinate_range_subset_list_expanded_copy.remove(y)
+            for w in coordinate_range_subset_list_expanded_copy:
+                if set(y).intersection(set(w)):
+                    valid_hsp_overlap = False
+        if valid_hsp_overlap is True:
+            valid_hsp_reads_list.append(x)
+    multiple_alignments_hsp_dict_valid["{0}".format(i)] = valid_hsp_reads_list
+
+    
+print("""
+Script is now using BLASTDBCMD (NCBI) to retrieve reference sequences that span multiple high-scoring pairs identified by BLASTN""")
+
+# BLASTDBCMD: use BLASTN reference genome database for BLASTDBCMD sequence retrieval
+# Reference database (same as for blastn in earlier alignment step)
+db_input = db_path / db_prefix
+    
+# Now prepare alignment 'reconstitutions' with aid of BLASTDBCMD
+blastdbcmd_alignments_list = []
+for index, i in enumerate(multiple_alignments_hsp_dict_valid):
+    for read in multiple_alignments_hsp_dict_valid.get(i):
+        blastdbcmd_alignments_list_read_sublist = []
+        # this sublist ultimately has 10 items; 1st 5 come from multiple_alignments_hsp_dict_valid, next 5 come from blastdbcmd & Genotypes.py in upcoming code below
+        blastdbcmd_alignments_list_read_sublist = [read[0]]+[read[1]]+[read[2]]+[read[3]]+[read[4]]
+        coordinate_range_exceeds_1kb_threshold = False
+        # number of high scoring pairs at/across single-hit accession number (sequence identifier)
+        hsp_count = len(read[6::6])
+        hsp_id_list = read[6::6]
+        hsp_from_to_list = []
+        hsp_sequence_identifier = read[5]
+        # assign sequence identifier
+        for hsp in hsp_id_list:
+            hsp_index = read.index(hsp)
+            hsp_from_to_list.append((read[hsp_index+1], read[hsp_index+2]))
+        # sequence_identifier shared by hsp's
+        sequence_identifier = hsp_sequence_identifier.split('>')[1].split('<')[0] 
+        coordinates_list = []
+        for hsp_from_to in hsp_from_to_list:
+            for x in hsp_from_to:
+                coordinates_list.append(int(x.split('>')[1].split('<')[0]))
+        coordinate_range = str(min(set(coordinates_list)))+'-'+str(max(set(coordinates_list)))
+    # Check whether the hsp's are within 1 kb of one another.  If not, deprecate as multi-mapping.  If they are within 1 kb, assume that blastn split them as separate hsp's because of intervening deletion/insertion relative to reference sequence.  Attempt to reconstitute.
+        if max(set(coordinates_list))-min(set(coordinates_list)) > 1000:
+            coordinate_range_exceeds_1kb_threshold = True
+    # Extract sequence spanning multiple high-scoring pairs (hsp), (if within 1 kb), using blastdbcmd
+    # blastdbcmd format is: blastdbcmd -db database -dbtype nucl -entry sequence_identifier -range coordinate_range
+    # for example: blastdbcmd -db database -dbtype nucl -entry chr6 -range 20000-20500
+    # Sequence retrieval (blastdbcmd) command
+        if coordinate_range_exceeds_1kb_threshold is True:
+            pass
+        else:
+            cmd_retrieve_sequence = str(blastdbcmd_path)+' -db '+str(db_input)+' -dbtype nucl -entry '+sequence_identifier+' -range '+coordinate_range+' -outfmt %s'
+            retrieved_sequence = subprocess.check_output(cmd_retrieve_sequence, shell=True).decode('utf8').strip()
+        # Get ready to reconstruct alignment
+        # for each tuple of from-to coordinates in hsp_from_to_list, convert to integers and sort by coordinates
+            coordinates_integer_list = []
+            for hsp_from_to in hsp_from_to_list:
+                new_tuple = tuple(sorted([int(x.split('>')[1].split('<')[0]) for x in hsp_from_to]))
+                coordinates_integer_list.append(new_tuple)
+            # sort coordinate spans in sequential order
+            coordinates_integer_list_sorted = sorted(coordinates_integer_list)
+            # take stock of whether sorting changed the relative order of the alignment blocks (hsp's), which will need to be accounted for in eventual alignment reconstruction effort
+            for index, hsp_from_to in enumerate(hsp_from_to_list):
+                new_index_list = []
+                new_tuple = tuple(sorted([int(x.split('>')[1].split('<')[0]) for x in hsp_from_to]))
+                new_index = coordinates_integer_list_sorted.index(new_tuple)
+                if new_index == index:
+                    pass
+                else:
+                    new_index_list.append(new_index)
+            # address whether there needs to be a regrouping of hsp data to correspond to their order relative to an alignment reference span
+            if len(new_index_list) == 0:
+                hsp_queries_and_midlines_list = []
+                for hsp in range(len(hsp_from_to_list)):
+                    hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
+                    hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
+                    if hsp < len(hsp_from_to_list)-1:
+                        gap_to_next_hsp = coordinates_integer_list_sorted[hsp+1][0] - coordinates_integer_list_sorted[hsp][1] - 1
+                    else:
+                        gap_to_next_hsp = 0
+                    hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,gap_to_next_hsp))
+            else:
+                # adjust hsp call series based on new index
+                hsp_queries_and_midlines_list = []
+                for hsp in new_index_list:
+                    hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
+                    hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
+                    if hsp < len(hsp_from_to_list)-1:
+                        gap_to_next_hsp = coordinates_integer_list_sorted[hsp+1][0] - coordinates_integer_list_sorted[hsp][1] - 1
+                    else:
+                        gap_to_next_hsp = 0
+                    hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,gap_to_next_hsp))
+            # reconstructed alignment midline
+            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][2]*' ')) for hsp in range(len(hsp_from_to_list))])
+            # reconstructed alignment sequence
+            reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+(hsp_queries_and_midlines_list[hsp][2]*'-')) for hsp in range(len(hsp_from_to_list))])
+            # provide reconstituted 'hsp hit from-to'
+            blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-from>'+coordinate_range.split('-')[0]+'</Hsp_hit-from>')
+            blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-to>'+coordinate_range.split('-')[1]+'</Hsp_hit-to>')
+            blastdbcmd_alignments_list_read_sublist.append('<Hsp_qseq>'+reconstructed_alignment_sequence+'</Hsp_qseq>')
+            blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
+            blastdbcmd_alignments_list_read_sublist.append('<Hsp_midline>'+reconstructed_midline+'</Hsp_midline>')
+            blastdbcmd_alignments_list.append(blastdbcmd_alignments_list_read_sublist)
+            
+            # (retrieved_sequence+'\n'+reconstructed_midline+'\n'+reconstructed_alignment_sequence)
+       
+          
+# Log alignment time duration
+alignmentsDuration = str(datetime.now()- startTime_alignments).split(':')[0]+' hr|'+str(datetime.now() - startTime_alignments).split(':')[1]+' min|'+str(datetime.now() - startTime_alignments).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_alignments).split(':')[2].split('.')[1]+' microsec' 
+###################
 
 # Prepare alignment_list4 for reads with exclusively 1 alignment hit in reference database
-alignments_list4 = []
+
+# alignments_list4 = []
+# for i in alignments_list3:
+#     if i not in multiple_alignments_list:
+#         alignments_list4.append(i)
+
+# for reads & their alignment data in alignments_list3 that were not identified as associated with >1 hsp, trim back each sublist to 10 indices (rather than 12 [remove accession and hsp_num indices, located at indices 5 & 6 of each sublist in alignments_list3]) (make these compatible with alignments_list4)
+multiple_alignments_hsp_list_to_exclude_from_alignments_list4 = []
+for i in multiple_alignments_hsp_dict:
+    for read in multiple_alignments_hsp_dict.get(i):
+        multiple_alignments_hsp_list_to_exclude_from_alignments_list4.append(read)
+
+alignments_list_temp = []
 for i in alignments_list3:
     if i not in multiple_alignments_list:
-        alignments_list4.append(i)
+        if i not in multiple_alignments_hsp_list_to_exclude_from_alignments_list4:
+            alignments_list_temp.append(i[0]+i[1]+i[2]+i[3]+i[4]+i[7]+i[8]+i[9]+i[10]+i[11])
+            
+# Now pool alignment data delivered strictly from BLASTN (alignments_list4), with alignment data 'reconstituted' by BLASTDBCMD (blastdbcmd_alignments_list)
+alignments_list4 = alignments_list_temp + blastdbcmd_alignments_list
 
 # Among lists containing alignment data in alignments_list4, determine which queries (reads) correspond to the same sample; where querydef = i[1].split(">")[1].split("_[")[0], reads belonging to the same sample share identical querydef
 # Fasta deflines encode frequency metrics for reads, based on defline format:
@@ -1489,7 +1710,7 @@ alignmentoutput_dict2 = { k : v for k,v in alignmentoutput_dict.items() if v}
 #        print(i, alignmentoutput_dict2.get(i)[x][4].split(">")[1].split("<")[0])
 
 print("""
-Script is now imputing genotypes.""")
+Script is now extrapolating genotypes.""")
 
 # Define nt complement dictionary
 nt_dict = {'A':'T', 'T':'A', 'G':'C', 'C':'G', 'N':'N', '-':'-'}
@@ -1766,10 +1987,10 @@ with open(str(allele_definitions_output), 'a+') as file:
             read_checklist = []
             read_abundance_checklist = []
             for n in range(1, len(imputedgenotypes_dict.get(i))):
-                if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1':
-                    if 'R1' not in read_checklist:
-                        read_checklist.append('R1')
-                        file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 |\n'+3*' '+'*'+8*'~'+'*\n\n')
+                if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1+R2':
+                    if 'R1+R2' not in read_checklist:
+                        read_checklist.append('R1+R2')
+                        file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 + READ 2|\n'+3*' '+'*'+8*'~'+'*\n\n')
                     else:
                         pass
                     if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
