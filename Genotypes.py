@@ -348,8 +348,8 @@ def prompts():
     This script uses BLASTDBCMD (NCBI) to retrieve DNA sequence spans between coordinates in a reference sequence database* (such as a genome database or sequence database) (*in cases where BLASTN has split an alignment into >1 local hit or high-scoring pair (hsp)).
     Please indicate the absolute path to the BLASTDBCMD executable.
     
-    Example: if your BLASTDBCMD executable is found at absolute path /Users/myname/blastdbcmd, type '/Users/myname/blastdbcmd'
-    and press Enter."""+'\n')
+    Example: if your BLASTDBCMD executable is found at absolute path /Users/myname/blastdbcmd,
+    type '/Users/myname/blastdbcmd' and press Enter."""+'\n')
     blastdbcmd_path = input(r"""    -----> Path to BLASTDBCMD executable:  """) 
     # 7-Specify whether to include sequence(s) of interest to query in alignment outputs.
     print("""      
@@ -1268,8 +1268,8 @@ with open(filename, 'a') as f:
 "\n    fastq_directory: "+ str(fastq_directory) +
 "\n    blastn_path: "+ str(blastn_path) +
 "\n    db_path: "+ str(db_path) +
-"\n    db_prefix: "+ db_prefix, file = f +
-"\n    blastdbcmd_path: "+ str(blastdbcmd_path))
+"\n    db_prefix: "+ db_prefix +
+"\n    blastdbcmd_path: "+ str(blastdbcmd_path), file = f )
     try:
         guideRNA_seq
     except NameError:
