@@ -1536,7 +1536,7 @@ for i in multiple_alignments_hsp_dict:
         # check whether hsp spans overlap; if they do, discard read
         coordinate_range_subset_list = []
         for index, span in enumerate(hsp_from_to_list):
-            coordinate_range_subset = [int(span[0].split('>')[1].split('<')[0])]+[int(span[1].split('>')[1].split('<')[0])]
+            coordinate_range_subset = sorted([int(span[0].split('>')[1].split('<')[0])]+[int(span[1].split('>')[1].split('<')[0])])
             coordinate_range_subset_list.append(coordinate_range_subset)
         coordinate_range_subset_list_expanded = [range(coordinate_range_subset[0],coordinate_range_subset[1]) for coordinate_range_subset in coordinate_range_subset_list]
         # set default overlap validity to True (no hsp overlaps)
@@ -1551,6 +1551,9 @@ for i in multiple_alignments_hsp_dict:
             valid_hsp_reads_list.append(x)
     multiple_alignments_hsp_dict_valid["{0}".format(i)] = valid_hsp_reads_list
 
+# Make a copy of multiple_alignments_hsp_dict_valid, removing dictionary keys with empty lists (no valid multiple hsp's: hsp(s) either span >1 kb, or overlap coordinates)
+multiple_alignments_hsp_dict_valid2 = { k : v for k,v in multiple_alignments_hsp_dict_valid.items() if v}
+    
     
 print("""
 Script is now using BLASTDBCMD (NCBI) to retrieve reference sequences that span multiple high-scoring pairs identified by BLASTN""")
@@ -1561,8 +1564,8 @@ db_input = db_path / db_prefix
     
 # Now prepare alignment 'reconstitutions' with aid of BLASTDBCMD
 blastdbcmd_alignments_list = []
-for index, i in enumerate(multiple_alignments_hsp_dict_valid):
-    for read in multiple_alignments_hsp_dict_valid.get(i):
+for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
+    for read in multiple_alignments_hsp_dict_valid2.get(i):
         blastdbcmd_alignments_list_read_sublist = []
         # this sublist ultimately has 10 items; 1st 5 come from multiple_alignments_hsp_dict_valid, next 5 come from blastdbcmd & Genotypes.py in upcoming code below
         blastdbcmd_alignments_list_read_sublist = [read[0]]+[read[1]]+[read[2]]+[read[3]]+[read[4]]
@@ -1604,8 +1607,8 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid):
             # sort coordinate spans in sequential order
             coordinates_integer_list_sorted = sorted(coordinates_integer_list)
             # take stock of whether sorting changed the relative order of the alignment blocks (hsp's), which will need to be accounted for in eventual alignment reconstruction effort
+            new_index_list = []
             for index, hsp_from_to in enumerate(hsp_from_to_list):
-                new_index_list = []
                 new_tuple = tuple(sorted([int(x.split('>')[1].split('<')[0]) for x in hsp_from_to]))
                 new_index = coordinates_integer_list_sorted.index(new_tuple)
                 if new_index == index:
@@ -1645,7 +1648,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid):
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_midline>'+reconstructed_midline+'</Hsp_midline>')
             blastdbcmd_alignments_list.append(blastdbcmd_alignments_list_read_sublist)
-            
+        print(i)
             # (retrieved_sequence+'\n'+reconstructed_midline+'\n'+reconstructed_alignment_sequence)
        
           
