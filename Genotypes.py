@@ -1671,7 +1671,7 @@ for i in multiple_alignments_hsp_dict:
 
 alignments_list_temp = []
 for i in alignments_list3:
-    if i not in multiple_alignments_list:
+    if i not in multiple_alignments_hits_list:
         if i not in multiple_alignments_hsp_list_to_exclude_from_alignments_list4:
             alignments_list_temp.append(i[0]+i[1]+i[2]+i[3]+i[4]+i[7]+i[8]+i[9]+i[10]+i[11])
             
