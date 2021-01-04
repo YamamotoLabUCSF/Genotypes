@@ -78,14 +78,14 @@ Please cite usage as:
 ---
 #### <span style="color:mediumorchid">Alleles\_and\_altered\_motifs.ovf</span>   
 
-The programs are available for use either individually or packaged into a virtual machine which can be run on Mac, Linux, or Windows operating systems. The "Alleles_and_altered_motifs" virtual machine comes pre-installed with BLAST, MEME, the full hg38 genome BLAST database, test datasets, and all the external dependencies needed to run SampleSheet, CollatedMotifs, and Genotypes. Windows users are encouraged to use the virtual machine to run CollatedMotifs because the MEME suite software upon which CollatedMotifs relies is not natively supported on Windows OS).
+The programs are available for use either individually or packaged into a virtual machine which can be run on Mac, Linux, or Windows operating systems. The "Alleles_and_altered_motifs" virtual machine comes pre-installed with BLAST, MEME, the full hg38 genome BLAST database, test datasets, and all the external dependencies needed to run SampleSheet, CollatedMotifs, and Genotypes. Windows users are encouraged to use the virtual machine to run CollatedMotifs, because the MEME suite software upon which CollatedMotifs relies is not natively supported on Windows OS.
 
-* Detailed instuctions on Virtual machine download and setup at <a href="https://doi.org/10.5281/zenodo.3406861">Download Alleles\_and\_altered\_motifs virtual machine</a> from Zenodo,  DOI 10.5281/zenodo.3406861)
+* Detailed instuctions on Virtual machine download and setup at <a href="https://doi.org/10.5281/zenodo.3406861">Download Alleles\_and\_altered\_motifs virtual machine</a> from Zenodo,  DOI 10.5281/zenodo.3406861
 
-* Note: Running the virtual machine requires virtualization software, such as Oracle VM VirtualBox available for download at <a href="https://www.virtualbox.org/">Download virtualbox Software</a>) https://www.virtualbox.org/
+* Note: Running the virtual machine requires virtualization software, such as Oracle VM VirtualBox available for download at <a href="https://www.virtualbox.org/">Download virtualbox Software</a> https://www.virtualbox.org/
 
 
-Linux and Mac users can also follw the steps below to install SampleSheet, Genotypes, and CollatedMotifs. If you are running Windows you can follow the steps below to install SampleSheet and Genotypes (without CollatedMotifs).
+Linux and Mac users can also follow the steps below to install SampleSheet, Genotypes, and CollatedMotifs. If you are running Windows, you can follow the steps below to install SampleSheet and Genotypes (without CollatedMotifs).
 
 
 
@@ -94,7 +94,7 @@ Linux and Mac users can also follw the steps below to install SampleSheet, Genot
 ---
 #### <span style="color:mediumorchid">2.1. Python 3 setup</span>
 
-<span style="color:mediumorchid"> Firts confirm that Python 3 (required) and Jupyter Notebook (optional) are available on your system, or download & install by following the steps below</span>   
+<span style="color:mediumorchid"> First confirm that Python 3 (required) and Jupyter Notebook (optional) are available on your system, or download & install by following the steps below</span>   
 
 
 
@@ -130,7 +130,7 @@ Option 1) Install Python 3 prior to Jupyter Notebook **This option is recommende
 
 ##### <span style="color:mediumorchid">Anaconda (Optional: Python 3 with Jupyter Notebook in one)</span>
  
-Option 2) To install Python 3 and Jupyter Notebook (together as part of Anaconda package)    
+Option 2) Install Python 3 and Jupyter Notebook (together as part of Anaconda package)    
    
 * [Anaconda (with Jupyter Notebook) Download & Installation](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html
 	* Download Anaconda with Python 3, and then follow installation guidelines and prompts when you double-click the downloaded package to complete installation.  
@@ -139,7 +139,7 @@ Option 2) To install Python 3 and Jupyter Notebook (together as part of Anaconda
 ###### <span style="color:mediumorchid">Anaconda on Mac</span>
 Anaconda with Jupyter Notebook on Mac   
 
-* Anaconda with Jupyter Notebook installed on a Mac/Linux OS will install the “Anaconda-Navigator” application in Applications folder. Within the Anaconda-Navigator application the user will find:
+* Anaconda with Jupyter Notebook installed on a Mac/Linux OS will install the “Anaconda-Navigator” application in Applications folder. Within the Anaconda-Navigator application, the user will find:
 
 	>Jupyter Notebook  
 
@@ -150,12 +150,12 @@ Anaconda with Jupyter Notebook on Mac
 ###### <span style="color:mediumorchid">Anaconda on Linux</span>
 Anaconda with Jupyter Notebook on Linux  
 
-* To install Anaconda on Linux, open terminal and navigate to the folder where Anaconda script (for example Anaconda3-2020.11-Linux-x86_64.sh) was downloaded.  
-	* Change the permissions to allow script execution with the chmod +x command for example:
+* To install Anaconda on Linux, open terminal and navigate to the folder where Anaconda script (for example, Anaconda3-2020.11-Linux-x86_64.sh) was downloaded.  
+	* Change the permissions to allow script execution with the chmod +x command, for example:
   	`$ chmod +x Anaconda3-2020.11-Linux-x86_64.sh` 
-	* Open the shell script with the ./ command for example:
+	* Open the shell script with the ./ command, for example:
   	`$ ./Anaconda3-2020.11-Linux-x86_64.sh`
-	* Follow the on-screen prompts and answering "yes" to "Do you whish the installer to initialize Anaconda3 by running conda init? [yes|no]"  
+	* Follow the on-screen prompts and answer "yes" to "Do you wish the installer to initialize Anaconda3 by running conda init? [yes|no]"  
 	* When the install is finished, restart terminal to initiate the new settings
 	* Anaconda navigator can be opened by the following command in a new terminal
   	`$ anaconda-navigator`
@@ -220,7 +220,7 @@ Jupyter Notebook can be run through Anaconda in Windows by opening the “Jupyte
 
 #### <span style="color:mediumorchid">2.2. GitHub repository</span>
 
-Download the repository (or program file subset) from GitHub
+Download the Genotypes repository (or program file subset) from GitHub
 
 Genotypes.py can be accessed as a **Jupyter Notebook** or **Python program file** available at [YamamotoLabUCSF GitHub](https://github.com/YamamotoLabUCSF/Genotypes) (https://github.com/YamamotoLabUCSF/Genotypes).  Please note that access to the file through GitHub requires a personal GitHub account.  
 
@@ -244,7 +244,7 @@ Genotypes.py can be accessed as a **Jupyter Notebook** or **Python program file*
 
 	**Clone:**   
 	  
-	* first click on the repository name	 to access the repository
+	* first click on the repository name to access the repository
 	* then click on the right-hand arrow of the **green download icon, labeled "Code"**, to access the drop-down menu with **Clone** options (HTTPS or GitHub CLI).
 	* If selecting the HTTPS option, copy the indicated URL and paste it at your command-line as an argument to the command 'git clone':  
 	`$ git clone https://github.com/YamamotoLabUCSF/Genotypes.git` 
@@ -257,7 +257,7 @@ Genotypes.py can be accessed as a **Jupyter Notebook** or **Python program file*
 	
 		* To create an empty directory named 'GenotypesCode', in the 'Documents' directory:*  
 	`$ mkdir /Users/yourusername/Documents/GenotypesCode`
-		* To navigate to the directory named 'Genotypes':	`$ cd /Users/yourusername/Documents/GenotypesCode`
+		* To navigate to the directory named 'GenotypesCode':	`$ cd /Users/yourusername/Documents/GenotypesCode`
 
 	* For example, on Windows PowerShell:  
 	 
@@ -277,9 +277,9 @@ Python 3 Libraries (required) and virtual environment (optional)
 
 You are now ready to install **additional Python modules** that Genotypes.py requires for operation.  These Python modules can be installed using one of the following two options:
 
-* Option A) Utilizing the pip3 command to automatically download the required libraries from the Python Package Index repository ([PyPI](https://pypi.org/)) (https://pypi.org/) and install them into your primary Python 3 directory from the requirements file 'Genotypes_requirements.txt'. This method is the most simple to execute and will be outlined first.
+* Option A) Use the pip3 command to automatically download the required libraries from the Python Package Index repository ([PyPI](https://pypi.org/)) (https://pypi.org/) and install them into your primary Python 3 directory from the requirements file 'Genotypes_requirements.txt'. This method is the most simple to execute and will be outlined first.
 
-* Option B) Installing a Python **virtual environment** (self-contained 'directory' with all the Python modules needed to run Genotypes.py). This method retains your original Python 3 install unchanged, protecting it from any possible library version conflicts that may arise from installing or updating the Genotypes.py required libraries.  
+* Option B) Install a Python **virtual environment** (self-contained 'directory' with all the Python modules needed to run Genotypes.py). This method retains your original Python 3 install unchanged, protecting it from any possible library version conflicts that may arise from installing or updating the Genotypes.py required libraries.  
   
 ##### <span style="color:mediumorchid">Libraries in default Python</span>  
   
@@ -375,7 +375,7 @@ You are now ready to install **additional Python modules** that Genotypes.py req
 
 	```$ pip3 install ipykernel```   
 	```$ python -m ipykernel install --name=Genotypes_env```  
-note administrator privilages may be needed on your system in which case use the following command
+note, administrator privilages may be needed on your system, in which case use the following command
 	```$ pseudo python -m ipykernel install --name=Genotypes_env```  
 followed by your administrator password
 
@@ -396,7 +396,7 @@ followed by your administrator password
 
 	`$ rm -rf Genotypes_env`  (Mac/Linux OS)  
      or  
-	`$ rm SampleSheet_env -r -fo`  (Widows PowerShell)  
+	`$ rm Genotypes_env -r -fo`  (Widows PowerShell)  
 
 	This would delete the virtual environment from your machine.
 
@@ -425,7 +425,7 @@ followed by your administrator password
 **Additional notes on: </sup> BLAST+ suite** available for download @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>)  
 
 * NCBI recommends Mac users install using the ncbi-blast-2.2.18+.dmg file.
-* MacOS 10.15 and higher have enhanced secutity that will require extra steps to install the ncbi-blast-2.2.18+.dmg
+* MacOS 10.15 and higher have enhanced security that will require extra steps to install the ncbi-blast-2.2.18+.dmg
 	* With Mac OS 10.15 or higher, you may encounter a ' "ncbi-blast-2.11.0+.pkg" cannot be opened because it is from an unidentified developer' error.
 	* If so, click on the question mark on the bottom left of the error window and follow the on-screen instructions to open the General Security Pane and allow the install.
 * The default BLAST install location from the .dmg file is: `/usr/local/ncbi/blast`
