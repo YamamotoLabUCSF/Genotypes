@@ -345,7 +345,8 @@ def prompts():
     Location of BLASTDBCMD EXECUTABLE
     ---------------------------------
 
-    This script uses BLASTDBCMD (NCBI) to retrieve DNA sequence spans between coordinates in a reference sequence database* (such as a genome database or sequence database) (*in cases where BLASTN has split an alignment into >1 local hit or high-scoring pair (hsp)).
+    This script uses BLASTDBCMD (NCBI) to retrieve DNA sequence spans between coordinates in a reference sequence database* (such as a genome database or sequence database) (*in cases where BLASTN has split an alignment into >1 local high-scoring pair (hsp)).
+    
     Please indicate the absolute path to the BLASTDBCMD executable.
     
     Example: if your BLASTDBCMD executable is found at absolute path /Users/myname/blastdbcmd,
@@ -439,9 +440,9 @@ def allele_output(genotype_class):
             for guide in imputedgenotypes_dict.get(i)[n][2]:
                 if imputedgenotypes_dict.get(i)[n][2].get(guide) != 'None':
                     if guide in guideRNA_seq:
-                        file.write((int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"5'-"+guide+"-3' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+len(guide)-3)*' '+'v')
+                        file.write('\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"5'-"+guide+"-3' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+len(guide)-3)*' '+'v')
                     elif guide in guideRNA_seq_rev:
-                        file.write((int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"3'-"+guide+"-5' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+4)*' '+'v')
+                        file.write('\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"3'-"+guide+"-5' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+4)*' '+'v')
             file.write(imputedgenotypes_dict.get(i)[n][0].get('alignment'))
             for seq in imputedgenotypes_dict.get(i)[n][3]:
                 if imputedgenotypes_dict.get(i)[n][3].get(seq) != 'None':
@@ -2054,9 +2055,9 @@ with open(str(allele_definitions_output), 'a+') as file:
                 for guide in imputedgenotypes_dict.get(i)[n][2]:
                     if imputedgenotypes_dict.get(i)[n][2].get(guide) != 'None':
                         if guide in guideRNA_seq:
-                            file.write((int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"5'-"+guide+"-3' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+len(guide)-3)*' '+'v')
+                            file.write('\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"5'-"+guide+"-3' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+len(guide)-3)*' '+'v')
                         elif guide in guideRNA_seq_rev:
-                            file.write((int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"3'-"+guide+"-5' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+4)*' '+'v')
+                            file.write('\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))-2)*' '+"3'-"+guide+"-5' (guide sequence)"+'\n'+(int(imputedgenotypes_dict.get(i)[n][2].get(guide))+4)*' '+'v')
                 file.write(imputedgenotypes_dict.get(i)[n][0].get('alignment'))
                 for seq in imputedgenotypes_dict.get(i)[n][3]:
                     if imputedgenotypes_dict.get(i)[n][3].get(seq) != 'None':
@@ -2546,13 +2547,9 @@ with open(str(population_summary_output), 'a+') as file:
         file.write('\n               None')
     else:
         for i in no_hits_samplename_list:
-            R1R2_check = []
             file.write('\n             '+i+':')
             for x in no_hits_list:
-                if i == x.split(' ')[0]:
-                    if 'R1+R2' not in R1R2_check:
-                        R1R2_check.append('R1+R2')
-                        file.write('\n               R1+R2')
+                if i == x.split('_')[0]:
                     file.write('\n               '+x)
             file.write('')
         
