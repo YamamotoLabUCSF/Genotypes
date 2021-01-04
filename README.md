@@ -1,4 +1,4 @@
-# <span style="color:blueviolet">Genotypes.py.py</span>
+# <span style="color:blueviolet">Genotypes.py</span>
 
 Define alleles for deeply sequenced genetic loci (PCR amplicons), and summarize loss or gain of transcription factor binding site (TFBS) motif matches relative to reference DNA sequence(s).  
 <br/> 
@@ -52,7 +52,7 @@ This script returns allele definitions (and inferred genotypes) for amplicons se
 ## <span style="color:blueviolet">Requirements</span>  
 * Python 3.7 or higher - instructions for install below
 * Python libraries (numpy, pip, psutil, scipy, setuptools, and wheel) - instructions for install below
-* BLASTN (NCBI) (available for OS-appropriate download as part of BLAST+ suite @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>) - For further notes see also [2.4 External dependencies](#24-external-dependencies) for exta notes on downloading & installing external dependencies (BLAST)
+* BLASTN & BLASTDBCMD (NCBI) (available for OS-appropriate download as part of BLAST+ suite @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>) - For further notes see also [2.4 External dependencies](#24-external-dependencies) for exta notes on downloading & installing external dependencies (BLAST)
 
   
 ## <span style="color:blueviolet">Synopsis</span>
@@ -130,9 +130,7 @@ Option 1) Install Python 3 prior to Jupyter Notebook **This option is recommende
 
 ##### <span style="color:mediumorchid">Anaconda (Optional: Python 3 with Jupyter Notebook in one)</span>
  
-Option 2) To install Python 3 and Jupyter Notebook (together as part of Anaconda package)   
-   
-* Note this method has *only been tested for use of SampleSheet.py and Genotypes.py on Windows* and my not work on all Mac or Linux systems in conjunction with the use of Python Virtual Enviornments (virtualenv) to run CollatedMotifs.py**  
+Option 2) To install Python 3 and Jupyter Notebook (together as part of Anaconda package)    
    
 * [Anaconda (with Jupyter Notebook) Download & Installation](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html
 	* Download Anaconda with Python 3, and then follow installation guidelines and prompts when you double-click the downloaded package to complete installation.  
@@ -152,7 +150,7 @@ Anaconda with Jupyter Notebook on Mac
 ###### <span style="color:mediumorchid">Anaconda on Linux</span>
 Anaconda with Jupyter Notebook on Linux  
 
-* To install Anaconda on Linux open terminal and navigate to the folder where Anaconda script (for example Anaconda3-2020.11-Linux-x86_64.sh) was downloaded.  
+* To install Anaconda on Linux, open terminal and navigate to the folder where Anaconda script (for example Anaconda3-2020.11-Linux-x86_64.sh) was downloaded.  
 	* Change the permissions to allow script execution with the chmod +x command for example:
   	`$ chmod +x Anaconda3-2020.11-Linux-x86_64.sh` 
 	* Open the shell script with the ./ command for example:
@@ -161,8 +159,8 @@ Anaconda with Jupyter Notebook on Linux
 	* When the install is finished, restart terminal to initiate the new settings
 	* Anaconda navigator can be opened by the following command in a new terminal
   	`$ anaconda-navigator`
-	* Jupyter Notebook can be opened through a selected internet browser (Google Chrome and FireFox have been tested) by selecting "Launch" on the Jupyter Notebook icon from within the home screen of the Anaconda Navigator. Note (base) may appear at the far left of the terminal when Anaconda is activated
-	* To deactivate Anaconda and revert to your default Python settings run the following terminal   command:
+	* Jupyter Notebook can be opened through a selected internet browser (Google Chrome and FireFox have been tested) by selecting "Launch" on the Jupyter Notebook icon from within the home screen of the Anaconda Navigator. Note: (base) may appear at the far left of the terminal when Anaconda is activated
+	* To deactivate Anaconda and revert to your default Python settings, run the following terminal command:
   	`$ conda deactivate` 
 	* To reactivate Anaconda and allow use of anaconda-navigator, run the following terminal command:
    	`$ conda activate`
@@ -181,7 +179,7 @@ Anaconda with Jupyter Notebook on Linux
 						(base) $ which jupyter-notebook
 						/home/altered/anaconda3/bin/jupyter-notebook
 
-	* If you wish to open new default terminals with anaconda deactivated add the `$ conda deactivate` command after the conda init code in your .bashrc file and use the `$ conda activate` command prior to use of the `$ anaconda-navigator` when opening Jupyter Notebooks  
+	* If you wish to open new default terminals with anaconda deactivated, add the `$ conda deactivate` command after the conda init code in your .bashrc file and use the `$ conda activate` command prior to use of the `$ anaconda-navigator` when opening Jupyter Notebooks  
 	
 ###### <span style="color:mediumorchid">Anaconda on Windows</span>
 
@@ -222,7 +220,7 @@ Jupyter Notebook can be run through Anaconda in Windows by opening the “Jupyte
 
 #### <span style="color:mediumorchid">2.2. GitHub repository</span>
 
-Download the ColllatedMotifs repository (or program file subset) from GitHub
+Download the repository (or program file subset) from GitHub
 
 Genotypes.py can be accessed as a **Jupyter Notebook** or **Python program file** available at [YamamotoLabUCSF GitHub](https://github.com/YamamotoLabUCSF/Genotypes) (https://github.com/YamamotoLabUCSF/Genotypes).  Please note that access to the file through GitHub requires a personal GitHub account.  
 
@@ -277,7 +275,7 @@ Genotypes.py can be accessed as a **Jupyter Notebook** or **Python program file*
 
 Python 3 Libraries (required) and virtual environment (optional)
 
-You are now ready to install an **additional Python module** that Genotypes.py requires for operation.  These Python modules can be installed using one of the following two options:
+You are now ready to install **additional Python modules** that Genotypes.py requires for operation.  These Python modules can be installed using one of the following two options:
 
 * Option A) Utilizing the pip3 command to automatically download the required libraries from the Python Package Index repository ([PyPI](https://pypi.org/)) (https://pypi.org/) and install them into your primary Python 3 directory from the requirements file 'Genotypes_requirements.txt'. This method is the most simple to execute and will be outlined first.
 
@@ -408,7 +406,7 @@ followed by your administrator password
 
 *Additional setup*:  
 
-* Locally install **BLASTN** (see Requirements)  
+* Locally install **BLASTN** and **BLASTDBCMD** (see Requirements)  
 <img src="Genotypes_img/BLASTN_thumbnail.png" align="left" width="100">
 <br clear="all" />
 
@@ -440,18 +438,18 @@ Code is available as a Jupyter Notebook file (**Genotypes.ipynb**) or as a Pytho
 
 ### <span style="color:mediumorchid">Python program (Genotypes.py) or Jupyter Notebook (Genotypes.ipynb)</span>
 
-In [System setup](#system-setup) above, you downloaded and installed Python 3 & the Genotypes code repository.  Optionally you may have also installed Jupyter Notebook & created a Python virtual environment (Genotypes\_env) containing the Python modules that Genotypes.py needs in order to run.  To access Genotypes.py (Jupyter Notebook or Python program file) for interactive work, proceed through guidelines indicated below.  
+In [System setup](#system-setup) above, you downloaded and installed Python 3 & the Genotypes code repository.  Optionally, you may have also installed Jupyter Notebook & created a Python virtual environment (Genotypes\_env) containing the Python modules that Genotypes.py needs in order to run.  To access Genotypes.py (Jupyter Notebook or Python program file) for interactive work, proceed through guidelines indicated below.  
 
 
 #### <span style="color:mediumorchid">Launching .py program</span>
 ##### <span style="color:mediumorchid">Command line .py</span>
 
 
-* To start the Genotypes.py program directly from the command line enter the follwing command
+* To start the Genotypes.py program directly from the command line, enter the follwing command:
 
 	`$ python3 [path_to_Genotypes.py]/Genotypes.py`
 
-* for example if you installed Genotypes.py within the GenotypesCode folder on your desktop the command would be:
+* for example, if you installed Genotypes.py within the GenotypesCode folder on your desktop, the command would be:
 
 	`$ python3 ~/Desktop/GenotypesCode/Genotypes.py`
 
@@ -459,7 +457,7 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
 
 ##### <span style="color:mediumorchid">Command line .py in virtual environment</span>
 
-1.  If you plan to run Genotypes.py using the CollateMotifs_env Python3 virtual environment from your command line, first navigate to the directory containing **Genotypes.py**.  Prepare access to a Python virtual environment containing appropriate packages required by Genotypes.py, as described in [System setup](#system-setup).  
+1.  If you plan to run Genotypes.py using the Genotypes_env Python3 virtual environment from your command line, first navigate to the directory containing **Genotypes.py**.  Prepare access to a Python virtual environment containing appropriate packages required by Genotypes.py, as described in [System setup](#system-setup).  
 
     (a) Activate Genotypes_env:   
 	`$ source Genotypes_env/bin/activate` (Mac/Linux OS)   
@@ -477,23 +475,11 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
 
 
 #### <span style="color:mediumorchid">Launching .ipynb program</span>   
-##### <span style="color:mediumorchid">Jupyter Notebook .ipynb</span>  
+##### <span style="color:mediumorchid">Jupyter Notebook .ipynb</span>
 
-Note, Jupyter Notebook file requires Genotypes_img directory containing five image files to be available in the directory from which the Jupyter Notebook will be opened.   
+*Note*, Jupyter Notebook file requires *Genotypes_img* directory containing six image files to be available in the directory from which the Jupyter Notebook will be opened.   
 
-1. To start Jupyter Notebook directly from the command line enter the follwing command:   
-
-	`$ jupyter notebook` or alternatively `$ jupyter-notebook`   
-
-2. You will see a new **tab open automatically in your default web browser** (such as Chrome), in which there is a **directory tree** illustrating the current file contents of the **current working** directory.  Navigate to the directory containing **Genotypes.ipynb**.  Click on the **Genotypes.ipynb** file to open it as a Jupyter Notebook.   
-
-
-##### <span style="color:mediumorchid">Jupyter Notebook .ipynb in virtual environment</span> 
- 
-
-*Note*, Jupyter Notebook file requires *Genotypes_img* directory containing five image files to be available in the directory from which the Jupyter Notebook will be opened.   
-
-1.  If you downloaded **Anaconda (with Jupyter Notebook)**, launch the Anaconda-Navigator application.  Click on **Jupyter Notebook** to activate Jupyter Notebook. Otherwise open Jupyter Notebook with the terminal command `$ jupyter notebook` or `$ jupyter-notebook`  
+1.  If you downloaded **Anaconda (with Jupyter Notebook)**, launch the Anaconda-Navigator application.  Click on **Jupyter Notebook** to activate Jupyter Notebook. Otherwise, open Jupyter Notebook with the terminal command `$ jupyter notebook` or `$ jupyter-notebook`  
 
 2.  You will see a new **tab open automatically in your default web browser** (such as Chrome), in which there is a **directory tree** illustrating the current file contents of the **current working** directory.  Navigate to the directory containing **Genotypes.ipynb**.  Click on the **Genotypes.ipynb** file to open it as a Jupyter Notebook.   
 
@@ -552,9 +538,9 @@ Files labeled *i-iv* below: Key output files containing script interpretations o
  
 
 ## <span style="color:blueviolet">Input notes</span>
-You will be prompted for the following user-specific information (up to 7 items):
+You will be prompted for the following user-specific information (up to 8 items):
 
-   **Required** (4 strings specifying directory or executable locations, 1 string specifying sequence database file prefix):  
+   **Required** (5 strings specifying directory or executable locations, 1 string specifying sequence database file prefix):  
       <ul>
       <li>where should output files go?</li>
           *path to* **output directory** *for output files*
