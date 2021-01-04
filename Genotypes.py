@@ -449,7 +449,7 @@ def allele_output(genotype_class):
                     if seq in extant_seq:
                         file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"5'-"+seq+"-3' (sequence of interest)\n")
                     elif seq in extant_seq_rev:
-                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest sequence)\n")
+                        file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest)\n")
                 elif imputedgenotypes_dict.get(i)[n][3].get(seq) == 'None':
                     file.write('\n')
             file.write('\n')
