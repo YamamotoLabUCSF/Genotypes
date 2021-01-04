@@ -2,7 +2,7 @@
 # Note: edit shebang line above as appropriate for your system
 # NAME: Kirk Ehmsen
 # FILE: Genotypes.py
-# DATE: 08-30-2018/08-02-2019/12-15-2020
+# DATE: 08-30-2018/08-02-2019/01-02-2021
 # DESC: This script accepts text to standard input, and returns allele definitions for samples
 # from a demultiplexed NGS fastq dataset.
 # USAGE: ./Genotypes.py or python3 Genotypes.py
@@ -11,16 +11,16 @@
 #############################################################################
 # Background notes:
 # ==============================================
-# This is Genotypes.py v1.0
+# This is Genotypes.py v1.1
 # ==============================================
 # https://github.com/YamamotoLabUCSF/Genotypes
-# v1.0/Committed 8-02-2019
+# v1.1/Committed 01-02-2021
 # ----------------------------------------------
 # For usage details, please refer to README file at GitHub and to the following manuscript:
-#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2020)
+#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2021)
 # Please cite usage as:
 #   Genotypes.py
-#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2020)
+#   Ehmsen, Knuesel, Martinez, Aridomi, Asahina, Yamamoto (2021)
 
 # Operation notes:
 # ==============================================
@@ -277,8 +277,8 @@ def prompts():
     Example: if you'd like to create a directory ('Genotypes') in an existing directory ('Illumina'), accessed
     with absolute path of '/Users/myname/Illumina/Genotypes' (Mac) or 'C:\Users\myname\Illumina\Genotypes'
     (Windows), enter '/Users/myname/Illumina/Genotypes' at the command line prompt. Replace 'myname' with the
-    appropriate intervening directory identifiers. Do *not* flank your entry with quotation marks (') at the command
-    line.
+    appropriate intervening directory identifiers. Do *not* flank your entry with quotation marks (') at the
+    command line.
     
     Alternatively, simply enter a desired directory name (e.g., 'Genotypes') and run this script from
     within a directory where you'd like to create this new directory."""+'\n')
@@ -388,7 +388,8 @@ def prompts():
       If your single guide RNA sequence is 'ATCCAGTTCTCCAGTCTCCC', enter: 'ATCCAGTTCTCCAGTCTCCC'.
       If you have two guide RNA sequences and they are 'ATCCAGTTCTCCAGTCTCCC' and 'GCGAGCTCGTGTCTGTGACG',
       enter: 'ATCCAGTTCTCCAGTCTCCC, GCGAGCTCGTGTCTGTGACG'."""+'\n')
-        guideRNA_seq = input(r"""    -----> guide RNA sequence(s):  """)
+        guideRNA_seq_temp = input(r"""    -----> guide RNA sequence(s):  """)
+        guideRNA_seq = [i.strip() for i in guideRNA_seq_temp.split(',')]
         # 7b-Collect sub-sequence details (extant in allele or not?).
         print("""
     ......................................................................................
@@ -406,7 +407,8 @@ def prompts():
       If your single query sequence is 'TACTCAATATCGATC', enter: 'TACTCAATATCGATC'.
       If you have two query sequences and they are 'TACTCAATATCGATC' and 'CGGGAGCCCGAG', enter:
       'TACTCAATATCGATC, CGGGAGCCCGAG'."""+'\n')
-        extant_seq = input(r"""    -----> query DNA sequence(s):  """)
+        extant_seq_temp = input(r"""    -----> query DNA sequence(s):  """)
+        extant_seq = [i.strip() for i in extant_seq_temp.split(',')]
 
 # Define 'allele_output' function to report defined alleles for samples based on genotype class designation
 def allele_output(genotype_class):
@@ -421,27 +423,12 @@ def allele_output(genotype_class):
             if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1+R2':
                 if 'R1+R2' not in read_checklist:
                     read_checklist.append('R1+R2')
-                    file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 + READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
+                    file.write('\n'+3*' '+'*'+17*'~'+'*\n'+3*' '+'| READ 1 + READ 2 |\n'+3*' '+'*'+17*'~'+'*\n\n')
                 else:
                     pass
-                if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
+                if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[4].split(':')[1]) < 10:
                     if 'R1dregs' not in read_abundance_checklist:
                         read_abundance_checklist.append('R1dregs')
-                        file.write(3*' '+'*'+56*'~'+'*\n'+3*' '+'|  >>>>> remaining alleles occur at frequency <10% <<<<< |\n'+3*' '+'*'+56*'~'+'*\n\n')
-                    else:
-                        pass    
-            elif imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R2':
-                if 'R2' not in read_checklist:
-                    read_checklist.append('R2')
-                    if 'R1' not in read_checklist:
-                        file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
-                    else:
-                        file.write(3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
-                else:
-                    pass
-                if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
-                    if 'R2dregs' not in read_abundance_checklist:
-                        read_abundance_checklist.append('R2dregs')
                         file.write(3*' '+'*'+56*'~'+'*\n'+3*' '+'|  >>>>> remaining alleles occur at frequency <10% <<<<< |\n'+3*' '+'*'+56*'~'+'*\n\n')
                     else:
                         pass
@@ -465,6 +452,7 @@ def allele_output(genotype_class):
                         file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest sequence)\n")
                 elif imputedgenotypes_dict.get(i)[n][3].get(seq) == 'None':
                     file.write('\n')
+            file.write('\n')
             file.write('\n')
 
 # Define 'frequency_plots' function to plot sample allele frequency metrics for visualization in pdf file
@@ -493,109 +481,70 @@ def frequency_plots():
     for samplename in imputedgenotypes_dict:
         plot_name = output_directory / (samplename+'_plot.png')
         pdf_output = output_directory / (samplename+'_.pdf')
-        R1_allele_list = []
-        R2_allele_list = []
-        R1_allele_names = []
-        R2_allele_names = []
-        R1_allele_frequency = []
-        R2_allele_frequency = []
-        R1_allele_type = []
-        R2_allele_type = []
-        R1_allele_specs = []
-        R2_allele_specs = []
+        R1R2_allele_list = []
+        R1R2_allele_names = []
+        R1R2_allele_frequency = []
+        R1R2_allele_type = []
+        R1R2_allele_specs = []
         for x in range(1, len(imputedgenotypes_dict[samplename])):
-            if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R1':
-                R1_allele_list.append(imputedgenotypes_dict[samplename][x][0].get('allele_name'))
-                R1_allele_type.append(imputedgenotypes_dict[samplename][x][1].get('allele_type'))
-                R1_allele_specs.append(imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
-            if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R2':
-                R2_allele_list.append(imputedgenotypes_dict[samplename][x][0].get('allele_name'))
-                R2_allele_type.append(imputedgenotypes_dict[samplename][x][1].get('allele_type'))
-                R2_allele_specs.append(imputedgenotypes_dict[samplename][x][1].get('allele_specs')) 
-        for i in range(1, len(R1_allele_list)+1):
-            R1_allele_names.append(i)
-        for i in range(1, len(R2_allele_list)+1):
-            R2_allele_names.append(i)
-        for i in R1_allele_list:
-            R1_allele_frequency.append(float(i.split(' ')[3].split(':')[1]))
-        for i in R2_allele_list:
-            R2_allele_frequency.append(float(i.split(' ')[3].split(':')[1]))
-#        
-        x1 = R1_allele_names
-        x2= R2_allele_names
+            if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R1+R2':
+                R1R2_allele_list.append(imputedgenotypes_dict[samplename][x][0].get('allele_name'))
+                R1R2_allele_type.append(imputedgenotypes_dict[samplename][x][1].get('allele_type'))
+                R1R2_allele_specs.append(imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
+        for i in range(1, len(R1R2_allele_list)+1):
+            R1R2_allele_names.append(i)
+        for i in R1R2_allele_list:
+            R1R2_allele_frequency.append(float(i.split(' ')[4].split(':')[1]))
+# 
+        x1 = R1R2_allele_names
 #
-        N = max(len(R1_allele_names), len(R2_allele_names))
+        N = len(R1R2_allele_names)
         width = 0.4
-        spacing1 = [float(i-width/2) for i in range(1,N+1)]
-        spacing2 = [float(i+width/2) for i in range(1,N+1)]
+        spacing1 = [float(i) for i in range(1,N+1)]
 #
-        y1a = R1_allele_frequency
-        y2a = R2_allele_frequency
+        y1a = R1R2_allele_frequency
         while len(y1a) < N:
             y1a.append(float(0))
-        while len(y2a) < N:
-            y2a.append(float(0))
-        label_list_a = [value for value in zip(x1,y1a,spacing1,R1_allele_type,R1_allele_specs)] + [value for value in zip(x2,y2a,spacing2,R2_allele_type,R2_allele_specs)]
+        label_list_a = [value for value in zip(x1,y1a,spacing1,R1R2_allele_type,R1R2_allele_specs)]
 #
-        R1_allele_frequency_top10 = []
-        R2_allele_frequency_top10 = []
-        for i in R1_allele_list:
-            freq1 = i.split(' ')[5].split(':')[1]
-            R1_allele_frequency_top10.append(float(freq1) if freq1 != 'None' else 0)
-        for i in R2_allele_list:
-            freq2 = i.split(' ')[5].split(':')[1]
-            R2_allele_frequency_top10.append(float(freq2) if freq2 != 'None' else 0)
-        y1b = R1_allele_frequency_top10
-        y2b = R2_allele_frequency_top10
+        R1R2_allele_frequency_top10 = []
+        for i in R1R2_allele_list:
+            freq1 = i.split(' ')[6].split(':')[1]
+            R1R2_allele_frequency_top10.append(float(freq1) if freq1 != 'None' else 0)
+        y1b = R1R2_allele_frequency_top10
         while len(y1b) < N:
             y1b.append(float(0))
-        while len(y2b) < N:
-            y2b.append(float(0))
-        label_list_b = [value for value in zip(x1,y1b,spacing1,R1_allele_type,R1_allele_specs)] + [value for value in zip(x2,y2b,spacing2,R2_allele_type,R2_allele_specs)]    
-#  
-        R1_allele_frequency_1 = []
-        R2_allele_frequency_1 = []
-        for i in R1_allele_list:
-            freq1 = i.split(' ')[6].split(':')[1]
-            R1_allele_frequency_1.append(float(freq1) if freq1 != 'None' else 0)
-        for i in R2_allele_list:
-            freq2 = i.split(' ')[6].split(':')[1]
-            R2_allele_frequency_1.append(float(freq2) if freq2 != 'None' else 0)
-        y1c = R1_allele_frequency_1
-        y2c = R2_allele_frequency_1
+        label_list_b = [value for value in zip(x1,y1b,spacing1,R1R2_allele_type,R1R2_allele_specs)]
+    
+#
+        R1R2_allele_frequency_1 = []
+        for i in R1R2_allele_list:
+            freq1 = i.split(' ')[7].split(':')[1]
+            R1R2_allele_frequency_1.append(float(freq1) if freq1 != 'None' else 0)
+        y1c = R1R2_allele_frequency_1
         while len(y1c) < N:
             y1c.append(float(0))
-        while len(y2c) < N:
-            y2c.append(float(0))
-        label_list_c = [value for value in zip(x1,y1c,spacing1,R1_allele_type,R1_allele_specs)] + [value for value in zip(x2,y2c,spacing2,R2_allele_type,R2_allele_specs)]
+        label_list_c = [value for value in zip(x1,y1c,spacing1,R1R2_allele_type,R1R2_allele_specs)]
 #
-        R1_allele_frequency_10 = []
-        R2_allele_frequency_10 = []
-        for i in R1_allele_list:
-            freq1 = i.split(' ')[7].split(':')[1]
-            R1_allele_frequency_10.append(float(freq1) if freq1 != 'None' else 0)
-        for i in R2_allele_list:
-            freq2 = i.split(' ')[7].split(':')[1]
-            R2_allele_frequency_10.append(float(freq2) if freq2 != 'None' else 0)
-        y1d = R1_allele_frequency_10
-        y2d = R2_allele_frequency_10
+        R1R2_allele_frequency_10 = []
+        for i in R1R2_allele_list:
+            freq1 = i.split(' ')[8].split(':')[1]
+            R1R2_allele_frequency_10.append(float(freq1) if freq1 != 'None' else 0)
+        y1d = R1R2_allele_frequency_10
         while len(y1d) < N:
             y1d.append(float(0))
-        while len(y2d) < N:
-            y2d.append(float(0))
-        label_list_d = [value for value in zip(x1,y1d,spacing1,R1_allele_type,R1_allele_specs)] + [value for value in zip(x2,y2d,spacing2,R2_allele_type,R2_allele_specs)]    
+        label_list_d = [value for value in zip(x1,y1d,spacing1,R1R2_allele_type,R1R2_allele_specs)]
 #
-# Plots    
-        fig = plt.figure(figsize=(10,7), dpi=100)
+# Plots
+        fig = plt.figure(figsize=(11,7), dpi=250)
 # Subplot 1
         ax1 = fig.add_subplot(141)
-        ax1.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x')
-        rects1 = ax1.barh(spacing1, y1a, width, color='#FFB90F', alpha=0.5, edgecolor='black', align='center')
-        rects2 = ax1.barh(spacing2, y2a, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
-        ax1.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
-        ax1.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax1.set_title('Allele frequencies\n(% total reads)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
-        plt.xlim([0,120])
+        ax1.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x', zorder=0)
+        rects1 = ax1.barh(spacing1, y1a, width, color='#87CEFA', alpha=1, edgecolor='black', linewidth=0.5, align='center', zorder=2, label='  R1\n+R2')
+        ax1.set_ylabel('Allele Rank', fontsize=10, fontname='Arial', alpha=0.8)
+        ax1.set_xlabel('Frequency', fontsize=10, fontname='Arial', alpha=0.8)
+        ax1.set_title('Allele frequencies\n(% total reads)', fontsize=8.5, fontweight='bold', fontname='Arial')
+        plt.xlim([0,110])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
         ax1 = plt.gca()
@@ -603,15 +552,19 @@ def frequency_plots():
         ax1.xaxis.set_minor_locator(ticker.MultipleLocator(5))
         ax1.yaxis.set_major_locator(ticker.MultipleLocator(1))
         ax1.spines['right'].set_visible(False)
-        ax1.legend((rects1[0], rects2[0]), ('R1', 'R2'), loc = 'lower right')
+        ax1.legend(loc = 'lower right', frameon=True, fontsize=7)
+        ax1.spines['bottom'].set_color('grey')
+        ax1.spines['top'].set_color('grey')
+        ax1.spines['left'].set_color('grey')
+        ax1.tick_params(which='both', color='grey', labelcolor='grey')
         for i in label_list_a:
             if i[1] != 0:
                 if i[1] > 20:
                     if str(i[4]) != 'None':
-                        ax1.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
-                        ax1.text(i[1]+2, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
+                        ax1.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
+                        ax1.text(i[1]/10, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
                     else:
-                        ax1.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
+                        ax1.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
                 else:
                     if str(i[4]) != 'None':
                         ax1.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', fontsize=7)
@@ -621,13 +574,12 @@ def frequency_plots():
 #
 # Subplot 2
         ax2 = fig.add_subplot(142)
-        ax2.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x')
-        rects1 = ax2.barh(spacing1, y1b, width, color='#FFB90F', alpha=0.5, edgecolor='black', align='center')
-        rects2 = ax2.barh(spacing2, y2b, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
-        ax2.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
-        ax2.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax2.set_title('Allele frequencies\n(% top 10 most abundant reads)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
-        plt.xlim([0,120])
+        ax2.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x', zorder=0)
+        rects1 = ax2.barh(spacing1, y1b, width, color='#87CEFA', alpha=1, edgecolor='black', linewidth=0.5, align='center', zorder=2, label='  R1\n+R2')
+        ax2.set_ylabel('Allele Rank', fontsize=10, fontname='Arial', alpha=0.8)
+        ax2.set_xlabel('Frequency', fontsize=10, fontname='Arial', alpha=0.8)
+        ax2.set_title('Allele frequencies\n(% top 10 most abundant reads)', fontsize=8.5, fontweight='bold', fontname='Arial')
+        plt.xlim([0,110])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
         ax2 = plt.gca()
@@ -635,15 +587,19 @@ def frequency_plots():
         ax2.xaxis.set_minor_locator(ticker.MultipleLocator(5))
         ax2.yaxis.set_major_locator(ticker.MultipleLocator(1))
         ax2.spines['right'].set_visible(False)
-        ax2.legend((rects1[0], rects2[0]), ('R1', 'R2'), loc = 'lower right')
+        ax2.legend(loc = 'lower right', frameon=True, fontsize=7)
+        ax2.spines['bottom'].set_color('grey')
+        ax2.spines['top'].set_color('grey')
+        ax2.spines['left'].set_color('grey')
+        ax2.tick_params(which='both', color='grey', labelcolor='grey')
         for i in label_list_b:
             if i[1] != 0:
                 if i[1] > 20:
                     if str(i[4]) != 'None':
-                        ax2.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
-                        ax2.text(i[1]+2, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
+                        ax2.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
+                        ax2.text(i[1]/10, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
                     else:
-                        ax2.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
+                        ax2.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
                 else:
                     if str(i[4]) != 'None':
                         ax2.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', fontsize=7)
@@ -653,13 +609,12 @@ def frequency_plots():
 #
 # Subplot 3       
         ax3 = fig.add_subplot(143)
-        ax3.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x')
-        rects1 = ax3.barh(spacing1, y1c, width, color='#FFB90F', alpha=0.5, edgecolor='black', align='center')
-        rects2 = ax3.barh(spacing2, y2c, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
-        ax3.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
-        ax3.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax3.set_title('Allele frequencies\n(% reads adjusted for frequency >1%)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
-        plt.xlim([0,120])
+        ax3.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x', zorder=0)
+        rects1 = ax3.barh(spacing1, y1c, width, color='#87CEFA', alpha=1, edgecolor='black', linewidth=0.5, align='center', zorder=2, label='  R1\n+R2')
+        ax3.set_ylabel('Allele Rank', fontsize=10, fontname='Arial', alpha=0.8)
+        ax3.set_xlabel('Frequency', fontsize=10, fontname='Arial', alpha=0.8)
+        ax3.set_title('Allele frequencies\n(% reads adjusted for frequency >1%)', fontsize=8.5, fontweight='bold', fontname='Arial')
+        plt.xlim([0,110])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
         ax3 = plt.gca()
@@ -667,15 +622,19 @@ def frequency_plots():
         ax3.xaxis.set_minor_locator(ticker.MultipleLocator(5))
         ax3.yaxis.set_major_locator(ticker.MultipleLocator(1))
         ax3.spines['right'].set_visible(False)
-        ax3.legend((rects1[0], rects2[0]), ('R1', 'R2'), loc = 'lower right')
+        ax3.legend(loc = 'lower right', frameon=True, fontsize=7)
+        ax3.spines['bottom'].set_color('grey')
+        ax3.spines['top'].set_color('grey')
+        ax3.spines['left'].set_color('grey')
+        ax3.tick_params(which='both', color='grey', labelcolor='grey')
         for i in label_list_c:
             if i[1] != 0:
                 if i[1] > 20:
                     if str(i[4]) != 'None':
-                        ax3.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
-                        ax3.text(i[1]+2, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
+                        ax3.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
+                        ax3.text(i[1]/10, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
                     else:
-                        ax3.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
+                        ax3.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
                 else:
                     if str(i[4]) != 'None':
                         ax3.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', fontsize=7)
@@ -685,13 +644,12 @@ def frequency_plots():
 #
 # Subplot 4
         ax4 = fig.add_subplot(144)
-        ax4.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x')
-        rects1 = ax4.barh(spacing1, y1d, width, color='#FFB90F', alpha=0.5, edgecolor='black', align='center')
-        rects2 = ax4.barh(spacing2, y2d, width, color='#0147FA', alpha=0.5, edgecolor='black', align='center')
-        ax4.set_ylabel('Allele Rank', fontsize=10, fontname='Myriad Pro')
-        ax4.set_xlabel('Frequency', fontsize=10, fontname='Myriad Pro')
-        ax4.set_title('Allele frequencies\n(% reads adjusted for frequency >10%)', fontsize=8, fontweight='bold', fontname='Myriad Pro')
-        plt.xlim([0,120])
+        ax4.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x', zorder=0)
+        rects1 = ax4.barh(spacing1, y1d, width, color='#87CEFA', alpha=1, edgecolor='black', linewidth=0.5, align='center', zorder=2, label='  R1\n+R2')
+        ax4.set_ylabel('Allele Rank', fontsize=10, fontname='Arial', alpha=0.8)
+        ax4.set_xlabel('Frequency', fontsize=10, fontname='Arial', alpha=0.8)
+        ax4.set_title('Allele frequencies\n(% reads adjusted for frequency >10%)', fontsize=8.5, fontweight='bold', fontname='Arial')
+        plt.xlim([0,110])
         plt.ylim([0.5, N+0.5])
         plt.gca().invert_yaxis()
         ax4 = plt.gca()
@@ -699,22 +657,25 @@ def frequency_plots():
         ax4.xaxis.set_minor_locator(ticker.MultipleLocator(5))
         ax4.yaxis.set_major_locator(ticker.MultipleLocator(1))
         ax4.spines['right'].set_visible(False)
-        ax4.legend((rects1[0], rects2[0]), ('R1', 'R2'), loc = 'lower right')
+        ax4.legend(loc = 'lower right', frameon=True, fontsize=7)
+        ax4.spines['bottom'].set_color('grey')
+        ax4.spines['top'].set_color('grey')
+        ax4.spines['left'].set_color('grey')
+        ax4.tick_params(which='both', color='grey', labelcolor='grey')
         for i in label_list_d:
             if i[1] != 0:
                 if i[1] > 20:
                     if str(i[4]) != 'None':
-                        ax4.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
-                        ax4.text(i[1]+2, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
+                        ax4.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', weight = 'bold', fontsize=7)
+                        ax4.text(i[1]/10, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
                     else:
-                        ax4.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
+                        ax4.text(i[1]/10, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', weight = 'bold', fontsize=7)
                 else:
                     if str(i[4]) != 'None':
                         ax4.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'bottom', color = 'black', fontsize=7)
                         ax4.text(i[1]+2, i[2], str(i[4]), va = 'top', color = 'black', style = 'italic', fontsize=7)
                     else:
                         ax4.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', fontsize=7)
-#
         plt.tight_layout()
 #
         plt.savefig(plot_name, format='png', dpi=250)
@@ -728,60 +689,33 @@ def frequency_plots():
         pdf.set_font("Arial", size=7)
         pdf.write(5, 'inferred genotype: '+imputedgenotypes_dict[samplename][0].split('|')[1]+','+imputedgenotypes_dict[samplename][0].split('|')[2])
         pdf.ln(5)
-        allele_count_R1 = 1
-        allele_count_R2 = 1
-        read1_check = []
-        read2_check = []
+        allele_count_R1R2 = 1
+        read1read2_check = []
         for x in range(1, len(imputedgenotypes_dict[samplename])):
-            if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R1':
-                if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[7].split(':')[1] == 'None':
+            if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R1+R2':
+                if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[8].split(':')[1] == 'None':
                     pass
-                elif float(imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[7].split(':')[1]) > 20:
-                    if len(read1_check) == 0:
-                        read1_check.append('R1')
+                elif float(imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[8].split(':')[1]) > 20:
+                    if len(read1read2_check) == 0:
+                        read1read2_check.append('R1+R2')
                         pdf.set_font("Arial", size=7, style='U')
-                        pdf.write(5, 'Read 1, sequences with >20% representation among reads:')
+                        pdf.write(5, 'R1+R2, sequences with >20% representation among reads:')
                         pdf.ln(3)
                     else:
                         pass
                     pdf.set_font("Arial", size=6)
                     if imputedgenotypes_dict[samplename][x][1].get('allele_specs') is not None:
-                        pdf.write(5, 'Allele '+str(allele_count_R1)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type')+', '+imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
+                        pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type')+', '+imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
                     else:
-                        pdf.write(5, 'Allele '+str(allele_count_R1)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))     
+                        pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))     
                     pdf.ln(3)
-                    pdf.set_font("Courier", size=6)
+                    pdf.set_font("Courier", size=4)
                     pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1])
                     pdf.ln(3)
                     pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2])
                     pdf.ln(3)
                     pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3])
-                    allele_count_R1 = allele_count_R1+1
-                    pdf.ln(4)
-            elif imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[1] == 'R2':
-                if imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[7].split(':')[1] == 'None':
-                    pass
-                elif float(imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[7].split(':')[1]) > 20:
-                    if len(read2_check) == 0:
-                        read2_check.append('R2')
-                        pdf.set_font("Arial", size=7, style='U')
-                        pdf.write(5, 'Read 2, sequences with >20% representation among reads:')
-                        pdf.ln(3)
-                    else:
-                        pass
-                    pdf.set_font("Arial", size=6)
-                    if imputedgenotypes_dict[samplename][x][1].get('allele_specs') is not None:
-                        pdf.write(5, 'Allele '+str(allele_count_R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type')+', '+imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
-                    else:
-                        pdf.write(5, 'Allele '+str(allele_count_R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))
-                    pdf.ln(3)
-                    pdf.set_font("Courier", size=6)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1])
-                    pdf.ln(3)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2])
-                    pdf.ln(3)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3])
-                    allele_count_R2 = allele_count_R2+1
+                    allele_count_R1R2 = allele_count_R1R2+1
                     pdf.ln(4)
         pdf.ln(5)
         pdf.image(str(plot_name), x = None, y = None, w = 195, h = 0, type = '', link = '')
@@ -852,23 +786,23 @@ def path_size(given_path):
 # Welcome/orient to script
 print("""
     ===================================================
-    Genotypes.py v1.0
+    Genotypes.py v1.1
     ===================================================
     https://github.com/YamamotoLabUCSF/Genotypes
-    v1.0/Committed 8-02-2019
+    v1.1/Committed 01-02-2021
     ---------------------------------------------------
     This script accepts text to standard input, and returns allele definitions for samples from a demultiplexed
     next-generation sequencing (NGS) fastq dataset.
     
-    Python3 and BLASTN are required for operation.
-    BLASTN can be downloaded and locally installed at 'https://www.ncbi.nlm.nih.gov/guide/howto/run-blast-local/'.
+    Python3, BLASTN and BLASTDBCMD (NCBI) are required for operation.
+    BLASTN and BLASTDBCMD can be downloaded and locally installed at 'https://www.ncbi.nlm.nih.gov/guide/howto/run-blast-local/'.
     
     For usage details, please refer to README file at GitHub and to the following manuscript:
-        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2020)
+        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2021)
     
     Please cite usage as:
         Genotypes.py
-        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2020)
+        Ehmsen, Knuesel, Martinez, Asahina, Aridomi, Yamamoto (2021)
     
     -------------------------------------------------------------------------------
     Welcome.  You will now be prompted for the following user-specific information:
@@ -899,8 +833,8 @@ user_input = input(r"""
     User-specified input: choice of coached prompts vs. single-list entry
     ---------------------------------------------------------------------
     
-    Values for the user-specified input indicated above can be entered at individually coached command-line prompts
-    (default), or as a single list of variables provided in a single command-line entry without coached prompts.
+    Values for the user-specified input indicated above can be entered at individually coached command-line prompts,
+    or as a single list of variables provided in a single command-line entry without coached prompts.
     
     To proceed with input at individual command-line PROMPTS, type 'Prompt' and press Enter;
     To proceed with input provided as a single LIST in one command-line entry, type 'List' and press Enter:  """)
@@ -1380,18 +1314,18 @@ for file_pair in R1_R2_map_list:
     counter=Counter(merged_read_list)
     # assign top 10 reads by count in fastq file (sourcefile) to modified_read_list_top10
     modified_read_list_top10 = []
-    for i in counter.most_common(10):
+    for index, i in enumerate(counter.most_common(10)):
         # read frequency relative to other reads that occur at >1% raw frequency
         filtered1 = sum([x for x in counter.values() if x/(sum(counter.values())) > 0.01])
         # read frequency relative to other reads that occur at >01% raw frequency
         filtered10 = sum([x for x in counter.values() if x/(sum(counter.values())) > 0.1])
         # read raw frequency
         raw_freq = round((100*i[1]/sum(counter.values())),2)
-        modified_read_list_top10.append([i[0], '['+str(i[1])+'/'+str(sum(counter.values()))+']', raw_freq, int(stats.percentileofscore([i for i in counter.values()], i[1], 'rank')), round((100*i[1]/sum([i[1] for i in counter.most_common(10)])),2), round((100*i[1]/filtered1),2) if filtered1 > 0 and raw_freq >= 1 else 'None', round((100*i[1]/filtered10),2) if filtered10 > 0 and raw_freq >= 10 else 'None'])
+        modified_read_list_top10.append([i[0], '['+str(i[1])+'/'+str(sum(counter.values()))+']', 'rank'+str(index+1), raw_freq, int(stats.percentileofscore([i for i in counter.values()], i[1], 'rank')), round((100*i[1]/sum([i[1] for i in counter.most_common(10)])),2), round((100*i[1]/filtered1),2) if filtered1 > 0 and raw_freq >= 1 else 'None', round((100*i[1]/filtered10),2) if filtered10 > 0 and raw_freq >= 10 else 'None'])
     # direct output in fasta format (with defline encoding sample name + frequency metrics) to fasta.fa
     with open(str(query_input), 'a+') as file:
         for i in modified_read_list_top10:
-            file.write('>'+fastaname[0]+'_'+'R1+R2'+'_'+str(i[1])+'_%totalreads:'+str(i[2])+'_percentile:'+str(i[3])+'_%top10reads:'+str(i[4])+'_%readsfilteredfor1%:'+str(i[5])+'_%readsfilteredfor10%:'+str(i[6])+'\n'+i[0]+'\n')
+            file.write('>'+fastaname[0]+'_'+'R1+R2'+'_'+str(i[1])+'_'+i[2]+'_%totalreads:'+str(i[3])+'_percentile:'+str(i[4])+'_%top10reads:'+str(i[5])+'_%readsfilteredfor1%:'+str(i[6])+'_%readsfilteredfor10%:'+str(i[7])+'\n'+i[0]+'\n')
 
 # Log read count time duration
 readcountDuration = str(datetime.now()- startTime_readcount).split(':')[0]+' hr|'+str(datetime.now() - startTime_readcount).split(':')[1]+' min|'+str(datetime.now() - startTime_readcount).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_readcount).split(':')[2].split('.')[1]+' microsec'
@@ -1465,7 +1399,8 @@ for i in alignments_list2:
 #    (a) if the two (or more) 'split matches' align to the same <Hit_id>, but to different chromosomal coordinates of that <Hit_id>, they will be presented by BLASTN as belonging to the same <Hit_num>, but to different <Hsp_num> (Hsp=high scoring pair)
 #    (b) if the two (or more) 'split matches' span different <Hit_id>'s (essentially different 'chunks' of sequence with unique names, as organized within the alignment database), they will be presented by BLASTN as belonging to different <Hit_num>
 # These observations suggest that it is important to distinguish a read with alignment to >1 sequence as either one with poor genomic target resolution, vs. one that harbors sizeable deletions or insertions relative to the reference sequence
-# One way to make this distinction may be to gauge how close in chromosomal space the >1 alignments are to one another, and assume their continuity if their proximity falls within a defined constraint.  Genotypes.py assigns this constraint to be 1000 bp (1kb).
+# One way to make this distinction may be to gauge how close in chromosomal space the >1 alignments are to one another, and assume their continuity if their proximity falls within a defined constraint.  Genotypes.py assigns this constraint to be 1000 bp (1kb)
+# Genotypes.py attempts to reconstitute hypothesized alleles that span multiple non-overlapping hsp's (and does not attempt to reconstitute across multiple hits or for ambiguous reconstructions from overlapping hsp's)
 
 # Organize reads with multiple hit IDs
 # These reads are deprecated (not further analyzed)
@@ -1520,11 +1455,13 @@ for i in multiple_alignments_hsp_samplename_list:
     
 # Not all top 10 ranked alleles for every sample will be subject to a multiple-hsp search; will need to keep track of this, to regroup allele alignments for individual samples at later step (i.e., regroup and print by rank alleles that have been reconstituted by BLASTDBCMD as well as alleles that did not require reconstitution)
 
-# For reads that have hsp's that overlap with one another, it is unclear how best to reconstitute an alignment; discard these reads from further analysis
+# For reads that have hsp's that overlap with one another, it is unclear how best to reconstitute an alignment; discard these reads from further analysis ('deprecate', but record their deprecation in population_summary.txt)
 
 multiple_alignments_hsp_dict_valid = {}
+multiple_alignments_hsp_dict_invalid = {}
 for i in multiple_alignments_hsp_dict:
     valid_hsp_reads_list = []
+    invalid_hsp_reads_list = []
     for x in multiple_alignments_hsp_dict.get(i):
         hsp_id_list = x[6::6]
         hsp_from_to_list = []
@@ -1549,14 +1486,18 @@ for i in multiple_alignments_hsp_dict:
                     valid_hsp_overlap = False
         if valid_hsp_overlap is True:
             valid_hsp_reads_list.append(x)
+        else:
+            invalid_hsp_reads_list.append(x)
     multiple_alignments_hsp_dict_valid["{0}".format(i)] = valid_hsp_reads_list
+    multiple_alignments_hsp_dict_invalid["{0}".format(i)] = invalid_hsp_reads_list
 
 # Make a copy of multiple_alignments_hsp_dict_valid, removing dictionary keys with empty lists (no valid multiple hsp's: hsp(s) either span >1 kb, or overlap coordinates)
 multiple_alignments_hsp_dict_valid2 = { k : v for k,v in multiple_alignments_hsp_dict_valid.items() if v}
+multiple_alignments_hsp_dict_invalid2 = { k : v for k,v in multiple_alignments_hsp_dict_invalid.items() if v}
     
     
 print("""
-Script is now using BLASTDBCMD (NCBI) to retrieve reference sequences that span multiple high-scoring pairs identified by BLASTN""")
+Script is now using BLASTDBCMD (NCBI) to retrieve reference sequences that span multiple high-scoring pairs identified by BLASTN.""")
 
 # BLASTDBCMD: use BLASTN reference genome database for BLASTDBCMD sequence retrieval
 # Reference database (same as for blastn in earlier alignment step)
@@ -1567,6 +1508,7 @@ blastdbcmd_alignments_list = []
 for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
     for read in multiple_alignments_hsp_dict_valid2.get(i):
         blastdbcmd_alignments_list_read_sublist = []
+        intervening_bases = ''
         # this sublist ultimately has 10 items; 1st 5 come from multiple_alignments_hsp_dict_valid, next 5 come from blastdbcmd & Genotypes.py in upcoming code below
         blastdbcmd_alignments_list_read_sublist = [read[0]]+[read[1]]+[read[2]]+[read[3]]+[read[4]]
         coordinate_range_exceeds_1kb_threshold = False
@@ -1589,6 +1531,11 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
     # Check whether the hsp's are within 1 kb of one another.  If not, deprecate as multi-mapping.  If they are within 1 kb, assume that blastn split them as separate hsp's because of intervening deletion/insertion relative to reference sequence.  Attempt to reconstitute.
         if max(set(coordinates_list))-min(set(coordinates_list)) > 1000:
             coordinate_range_exceeds_1kb_threshold = True
+            # add this deprecated read to multiple_alignments_hsp_dict_invalid2
+            if i in multiple_alignments_hsp_dict_invalid2:
+                multiple_alignments_hsp_dict_invalid2[i].append(read)
+            else:
+                multiple_alignments_hsp_dict_invalid2["{0}".format(i)] = [read]     
     # Extract sequence spanning multiple high-scoring pairs (hsp), (if within 1 kb), using blastdbcmd
     # blastdbcmd format is: blastdbcmd -db database -dbtype nucl -entry sequence_identifier -range coordinate_range
     # for example: blastdbcmd -db database -dbtype nucl -entry chr6 -range 20000-20500
@@ -1616,42 +1563,127 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                 else:
                     new_index_list.append(new_index)
             # address whether there needs to be a regrouping of hsp data to correspond to their order relative to an alignment reference span
+            # first, if no order adjustment needed:
             if len(new_index_list) == 0:
                 hsp_queries_and_midlines_list = []
                 for hsp in range(len(hsp_from_to_list)):
+                    intervening_bases = ''
+                    cognate_read_sequence = ''
+                    result = ''
                     hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
                     hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
                     if hsp < len(hsp_from_to_list)-1:
                         gap_to_next_hsp = coordinates_integer_list_sorted[hsp+1][0] - coordinates_integer_list_sorted[hsp][1] - 1
                     else:
                         gap_to_next_hsp = 0
-                    hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,gap_to_next_hsp))
+                    # Determine whether there is/are insertion(s) to account for in read relative to hsp's
+                    hsp_crosscheck_back_to_read = []
+                    hsp_sequence_identifier = read[5]
+                    read_ID = '>'+read[1].split('>')[1].split('<')[0]
+                    # append read_ID (as fastaname) to hsp_crosscheck_back_to_read (making it index 0)
+                    hsp_crosscheck_back_to_read.append(read_ID)
+                    hsp_sequences_to_join = []
+                    for hsp in hsp_id_list:
+                        hsp_index = read.index(hsp)
+                        hsp_sequences_to_join.append((read[hsp_index+3].split('>')[1].split('<')[0]))
+                    hsp_sequences_joined = ''.join(hsp_sequences_to_join)
+                    # append hsp match sequences to hsp_crosscheck_back_to_read as a list (making them index 1)
+                    hsp_crosscheck_back_to_read.append(hsp_sequences_to_join)
+                    # refer to initial fasta.fa file (query_input) to retrieve cognate read sequence
+                    with open(query_input) as file_iterator:
+                        for line in file_iterator:
+                            if read_ID in line:
+                                cognate_read_sequence = next(file_iterator).strip()
+                    # append cognate read sequence to hsp_crosscheck_back_to_read (making it index 2)
+                    hsp_crosscheck_back_to_read.append(cognate_read_sequence)
+                    # find any intervening read bases that were not accounted for in an hsp
+                    result = re.search(hsp_crosscheck_back_to_read[1][0]+'(.*)'+hsp_crosscheck_back_to_read[1][1], hsp_crosscheck_back_to_read[2])
+                    if result:
+                        if hsp in range(0,len(hsp_from_to_list),2):
+                            intervening_bases = result.group(1)
+                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,intervening_bases,gap_to_next_hsp+len(intervening_bases)))
+                            if retrieved_sequence_updated:
+                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
+                                # get indices of added
+                            else:
+                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
+                        else:
+                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp)) 
+                    else:
+                        hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp))
+            # alternatively, adjust hsp call series based on new index if needed:
             else:
-                # adjust hsp call series based on new index
                 hsp_queries_and_midlines_list = []
+                #print('reversed')
+                hsp_count = 0
                 for hsp in new_index_list:
+                    intervening_bases = ''
+                    cognate_read_sequence = ''
+                    result = ''
                     hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
                     hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
-                    if hsp < len(hsp_from_to_list)-1:
-                        gap_to_next_hsp = coordinates_integer_list_sorted[hsp+1][0] - coordinates_integer_list_sorted[hsp][1] - 1
+                    if hsp_count < len(hsp_from_to_list)-1:
+                        gap_to_next_hsp = coordinates_integer_list_sorted[hsp_count+1][0] - coordinates_integer_list_sorted[hsp_count][1] - 1
                     else:
                         gap_to_next_hsp = 0
-                    hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,gap_to_next_hsp))
+                    hsp_count = hsp_count+1
+                    # Determine whether there is/are insertion(s) to account for in read relative to hsp's
+                    hsp_crosscheck_back_to_read = []
+                    hsp_sequence_identifier = read[5]
+                    read_ID = '>'+read[1].split('>')[1].split('<')[0]
+                    # append read_ID (as fastaname) to hsp_crosscheck_back_to_read (making it index 0)
+                    hsp_crosscheck_back_to_read.append(read_ID)
+                    hsp_sequences_to_join = []
+                    for hsp in hsp_id_list:
+                        hsp_index = read.index(hsp)
+                        hsp_sequences_to_join.append((read[hsp_index+3].split('>')[1].split('<')[0]))
+                    hsp_sequences_joined = ''.join(hsp_sequences_to_join)
+                    # append hsp match sequences to hsp_crosscheck_back_to_read as a list (making them index 1)
+                    hsp_crosscheck_back_to_read.append(hsp_sequences_to_join)
+                    # refer to initial fasta.fa file (query_input) to retrieve cognate read sequence
+                    with open(query_input) as file_iterator:
+                        for line in file_iterator:
+                            if read_ID in line:
+                                cognate_read_sequence = next(file_iterator).strip()
+                    # append cognate read sequence to hsp_crosscheck_back_to_read (making it index 2)
+                    hsp_crosscheck_back_to_read.append(cognate_read_sequence)
+                    # find any intervening read bases that were not accounted for in an hsp
+                    result = re.search(hsp_crosscheck_back_to_read[1][0]+'(.*)'+hsp_crosscheck_back_to_read[1][1], hsp_crosscheck_back_to_read[2])
+                    if result:
+                        if hsp in range(0,len(hsp_from_to_list),2):
+                            intervening_bases = result.group(1)
+                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,intervening_bases,gap_to_next_hsp+len(intervening_bases)))
+                            if retrieved_sequence_updated:
+                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
+                                # get indices of added
+                            else:
+                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
+                        else:
+                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp)) 
+                    else:
+                        hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp))
+            # retrieved_sequence
             # reconstructed alignment midline
-            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][2]*' ')) for hsp in range(len(hsp_from_to_list))])
+            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][3]*' ')) for hsp in range(len(hsp_from_to_list))])
             # reconstructed alignment sequence
-            reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+(hsp_queries_and_midlines_list[hsp][2]*'-')) for hsp in range(len(hsp_from_to_list))])
+            reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+hsp_queries_and_midlines_list[hsp][2]+(hsp_queries_and_midlines_list[hsp][3]*'-')) for hsp in range(len(hsp_from_to_list))])
             # provide reconstituted 'hsp hit from-to'
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-from>'+coordinate_range.split('-')[0]+'</Hsp_hit-from>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-to>'+coordinate_range.split('-')[1]+'</Hsp_hit-to>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_qseq>'+reconstructed_alignment_sequence+'</Hsp_qseq>')
-            blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
+            try:
+                retrieved_sequence_updated
+            except NameError:
+                blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
+            else:
+                blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_midline>'+reconstructed_midline+'</Hsp_midline>')
             blastdbcmd_alignments_list.append(blastdbcmd_alignments_list_read_sublist)
-        print(i)
-            # (retrieved_sequence+'\n'+reconstructed_midline+'\n'+reconstructed_alignment_sequence)
-       
-          
+
+# Take note of sample IDs with reads that were considered for multiple-hsp reconstruction, but deprecated because
+# of overlapping hsp's and/or hsp span exceeding 1kb
+multiple_alignments_hsp_invalid2_list = [i for i in multiple_alignments_hsp_dict_invalid2]
+
 # Log alignment time duration
 alignmentsDuration = str(datetime.now()- startTime_alignments).split(':')[0]+' hr|'+str(datetime.now() - startTime_alignments).split(':')[1]+' min|'+str(datetime.now() - startTime_alignments).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_alignments).split(':')[2].split('.')[1]+' microsec' 
 ###################
@@ -1664,6 +1696,7 @@ alignmentsDuration = str(datetime.now()- startTime_alignments).split(':')[0]+' h
 #         alignments_list4.append(i)
 
 # for reads & their alignment data in alignments_list3 that were not identified as associated with >1 hsp, trim back each sublist to 10 indices (rather than 12 [remove accession and hsp_num indices, located at indices 5 & 6 of each sublist in alignments_list3]) (make these compatible with alignments_list4)
+# First exclude these reads from alignments_list4, because they will be instead delivered via blastdbcmd_alignments_list
 multiple_alignments_hsp_list_to_exclude_from_alignments_list4 = []
 for i in multiple_alignments_hsp_dict:
     for read in multiple_alignments_hsp_dict.get(i):
@@ -1673,7 +1706,7 @@ alignments_list_temp = []
 for i in alignments_list3:
     if i not in multiple_alignments_hits_list:
         if i not in multiple_alignments_hsp_list_to_exclude_from_alignments_list4:
-            alignments_list_temp.append(i[0]+i[1]+i[2]+i[3]+i[4]+i[7]+i[8]+i[9]+i[10]+i[11])
+            alignments_list_temp.append([i[0]]+[i[1]]+[i[2]]+[i[3]]+[i[4]]+[i[7]]+[i[8]]+[i[9]]+[i[10]]+[i[11]])
             
 # Now pool alignment data delivered strictly from BLASTN (alignments_list4), with alignment data 'reconstituted' by BLASTDBCMD (blastdbcmd_alignments_list)
 alignments_list4 = alignments_list_temp + blastdbcmd_alignments_list
@@ -1694,9 +1727,21 @@ for i in querydef_list:
         querydef_uniq_list.append(i)
 
 # Prepare dictionary relating sample IDs to their associated reads ('alleles')
+# Reorder ranked alleles as necessary
 alignmentoutput_dict = {}
 for i in querydef_uniq_list:
-    alignmentoutput_dict["{0}".format(i)] = tuple(x for x in alignments_list4 if bool(re.search(i, x[1])))
+    temp_ranked_read_list = [x for x in alignments_list4 if bool(re.search(i, x[1]))]
+    temp_ranked_read_order = []
+    new_ranked_read_order = []
+    for index, ranked_read in enumerate(temp_ranked_read_list):
+        rank = int(ranked_read[1].split('>')[1].split('<')[0].split('_')[3].split('k')[1])
+        temp_ranked_read_order.append([rank, ranked_read])
+    for read in sorted(temp_ranked_read_order):
+        new_ranked_read_order.append(read[1])
+    alignmentoutput_dict["{0}".format(i)] = tuple(new_ranked_read_order)
+
+#for i in querydef_uniq_list:
+#    alignmentoutput_dict["{0}".format(i)] = tuple(x for x in alignments_list4 if bool(re.search(i, x[1])))
     
 # Identify & subset sample ID's that do not have output alleles (empty tuple values in dictionary)
 empty_sampleIDs_list = []
@@ -1993,27 +2038,12 @@ with open(str(allele_definitions_output), 'a+') as file:
                 if imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R1+R2':
                     if 'R1+R2' not in read_checklist:
                         read_checklist.append('R1+R2')
-                        file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 1 + READ 2|\n'+3*' '+'*'+8*'~'+'*\n\n')
+                        file.write('\n'+3*' '+'*'+17*'~'+'*\n'+3*' '+'| READ 1 + READ 2 |\n'+3*' '+'*'+17*'~'+'*\n\n')
                     else:
                         pass
-                    if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
-                        if 'R1dregs' not in read_abundance_checklist:
-                            read_abundance_checklist.append('R1dregs')
-                            file.write(3*' '+'*'+56*'~'+'*\n'+3*' '+'|  >>>>> remaining alleles occur at frequency <10% <<<<< |\n'+3*' '+'*'+56*'~'+'*\n\n')
-                        else:
-                            pass    
-                elif imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[1] == 'R2':
-                    if 'R2' not in read_checklist:
-                        read_checklist.append('R2')
-                        if 'R1' not in read_checklist:
-                            file.write('\n'+3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
-                        else:
-                            file.write(3*' '+'*'+8*'~'+'*\n'+3*' '+'| READ 2 |\n'+3*' '+'*'+8*'~'+'*\n\n')
-                    else:
-                        pass
-                    if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[3].split(':')[1]) < 10:
-                        if 'R2dregs' not in read_abundance_checklist:
-                            read_abundance_checklist.append('R2dregs')
+                    if float(imputedgenotypes_dict.get(i)[n][0].get('allele_name').split(' ')[4].split(':')[1]) < 10:
+                        if 'R1+R2dregs' not in read_abundance_checklist:
+                            read_abundance_checklist.append('R1+R2dregs')
                             file.write(3*' '+'*'+56*'~'+'*\n'+3*' '+'|  >>>>> remaining alleles occur at frequency <10% <<<<< |\n'+3*' '+'*'+56*'~'+'*\n\n')
                         else:
                             pass
@@ -2037,7 +2067,7 @@ with open(str(allele_definitions_output), 'a+') as file:
                             file.write((1+int(imputedgenotypes_dict.get(i)[n][3].get(seq)))*' '+len(seq)*'^'+'\n'+(int(imputedgenotypes_dict.get(i)[n][3].get(seq))-2)*' '+"3'-"+seq+"-5' (sequence of interest)\n")
                     elif imputedgenotypes_dict.get(i)[n][3].get(seq) == 'None':
                         file.write('\n')
-                file.write('\n')
+                file.write('\n\n')
 
 # Next print to genotypes.txt, using imputed genotype criteria as basis for reporting order
 # First prepare lists that bin sampleIDs based on imputed genotype
@@ -2137,7 +2167,7 @@ imputed_genotypes_output = Path(str(output_path)+'/'+processdate+'_genotypes.txt
     # imputedgenotypes_homowildtype
     # imputedgenotypes_unclear
 with open(str(imputed_genotypes_output), 'a+') as file:
-    file.write('=Genotypes.py: Genotypes\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
+    file.write('Genotypes.py: Genotypes\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
     if len(imputedgenotypes_homodeletion) > 0:
         file.write('\n\nHOMOZYGOUS DELETION\n...................\n\n')
         allele_output(imputedgenotypes_homodeletion)
@@ -2176,7 +2206,7 @@ with open(str(imputed_genotypes_output), 'a+') as file:
         file.write('\n\nHETEROZYGOUS SUBSTITUTION\n.........................\n\n')
         allele_output(imputedgenotypes_heterosubstitution)
     if len(imputedgenotypes_multizygous) > 0:
-        file.write('\n\nMULTIZYGOUS (>2 ALLELES)\n..................\n\n')
+        file.write('\n\nMULTIZYGOUS (>2 ALLELES)\n........................\n\n')
         allele_output(imputedgenotypes_multizygous)
     if len(imputedgenotypes_homowildtype) > 0:
         file.write('\n\nHOMOZYGOUS WILD-TYPE\n....................\n\n')
@@ -2199,10 +2229,10 @@ imputedgenotypes_dataframe = pd.DataFrame(
         "sample": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[0] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "reads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[2].split('/')[0].strip('[') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "totalreads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[2].split('/')[1].strip(']') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
-        "%totalreads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[3].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
-        "%top10reads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[5].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
-        "%readsfilteredfor>1%": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[6].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
-        "%readsfilteredfor>10%": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[7].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],  
+        "%totalreads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[4].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
+        "%top10reads": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[6].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
+        "%readsfilteredfor>1%": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[7].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
+        "%readsfilteredfor>10%": [imputedgenotypes_dict.get(i)[x][0].get('allele_name').split(' ')[8].split(':')[1] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],  
         "chr": [imputedgenotypes_dict.get(i)[x][0].get('chr+build').split(',')[0] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "locusID": [imputedgenotypes_dict.get(i)[x][0].get('locusID') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "coordinates": [imputedgenotypes_dict.get(i)[x][0].get('coordinates') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
@@ -2211,7 +2241,7 @@ imputedgenotypes_dataframe = pd.DataFrame(
         "alignment_hit": [imputedgenotypes_dict.get(i)[x][0].get('alignment').split('\n')[3] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "allele_type": [imputedgenotypes_dict.get(i)[x][1].get('allele_type') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
         "allele_specs": [imputedgenotypes_dict.get(i)[x][1].get('allele_specs') for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))],
-        "imputed_genotype": [imputedgenotypes_dict.get(i)[0] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))]
+        "inferred_genotype": [imputedgenotypes_dict.get(i)[0] for i in imputedgenotypes_dict for x in range(1,len(imputedgenotypes_dict.get(i)))]
      }
 )
 
@@ -2241,7 +2271,7 @@ genotype_checklist = []
 for i in imputedgenotypes_dataframe['sample'].tolist():
     if i not in sample_checklist:
         sample_checklist.append(i)
-        genotype_checklist.append(set(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['imputed_genotype']))
+        genotype_checklist.append(set(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['inferred_genotype']))
     else:
         pass
 
@@ -2358,17 +2388,14 @@ for i in imputedgenotypes_dataframe['sample'].tolist():
     sample_alleles = []
     if i not in sample_checklist:
         sample_checklist.append(i)
-        R1_check = []
+        R1R2_check = []
         for x in range(0, len(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'])):
             if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'].iloc[x] == 'None':
                 pass
             elif float(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'].iloc[x]) > 10:
-                if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R1':
-                    R1_check.append('R1/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_type'].iloc[x])
+                if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R1+R2':
+                    R1R2_check.append('R1+R2/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_type'].iloc[x])
                     sample_alleles.append(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_type'].iloc[x])
-                elif imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R2':
-                    if 'R1'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_type'].iloc[x] in R1_check:
-                        pass
         if len(sample_alleles) != 0:
             allele_type_checklist.append(sample_alleles)
             
@@ -2385,8 +2412,8 @@ for i in allele_type_checklist:
     elif len(i) == 2:
         if re.search('wild-type', str(i)):
             wt_alleles = wt_alleles+1
-        if re.search('mutant', str(i)):
-            mutant_alleles = mutant_alleles+1
+        if re.findall('mutant', str(i)):
+            mutant_alleles = mutant_alleles+len(re.findall('mutant', str(i)))
     elif len(i) == 3:
         if re.search('wild-type', str(i)):
             wt_alleles = wt_alleles+1
@@ -2402,7 +2429,7 @@ for i in imputedgenotypes_dataframe['sample'].tolist():
     sample_alleles = []
     if i not in sample_checklist:
         sample_checklist.append(i)
-        R1_check = []
+        R1R2_check = []
         for x in range(0, len(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'])):
             if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'].iloc[x] == 'None':
                 pass
@@ -2410,12 +2437,12 @@ for i in imputedgenotypes_dataframe['sample'].tolist():
                 if 'wild-type' not in sample_alleles:
                     sample_alleles.append('wild-type')
             elif float(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['%readsfilteredfor>10%'].iloc[x]) > 10:
-                if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R1':
-                    if 'R1/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x] not in R1_check:
-                        R1_check.append('R1/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x])
+                if imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R1+R2':
+                    if 'R1+R2/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x] not in R1R2_check:
+                        R1R2_check.append('R1+R2/'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x])
                         sample_alleles.append(imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x])
-                elif imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R2':
-                    if 'R1'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x] in R1_check:
+                elif imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['read'].iloc[x] == 'R1+R2':
+                    if 'R1+R2'+imputedgenotypes_dataframe[imputedgenotypes_dataframe['sample'] == i]['allele_specs'].iloc[x] in R1R2_check:
                         pass
         if len(sample_alleles) != 0:
             allele_specs_checklist.append(sample_alleles)
@@ -2437,14 +2464,14 @@ for i in allele_specs_checklist:
         elif re.search('indel', str(i)):
             indel_alleles = indel_alleles+2
     elif len(i) == 2:
-        if re.search('deletion', str(i)):
-            deletion_alleles = deletion_alleles+1
-        if re.search('insertion', str(i)):
-            insertion_alleles = insertion_alleles+1
-        if re.search('substitution', str(i)):
-            substitution_alleles = substitution_alleles+1
-        if re.search('indel', str(i)):
-            indel_alleles = indel_alleles+1
+        if re.findall('deletion', str(i)):
+            deletion_alleles = deletion_alleles+len(re.findall('deletion', str(i)))
+        if re.findall('insertion', str(i)):
+            insertion_alleles = insertion_alleles+len(re.findall('insertion', str(i)))
+        if re.findall('substitution', str(i)):
+            substitution_alleles = substitution_alleles+len(re.findall('substitution', str(i)))
+        if re.findall('indel', str(i)):
+            indel_alleles = indel_alleles+len(re.findall('indel', str(i)))
     elif len(i) == 3:
         if re.findall('deletion', str(i)):
             deletion_alleles = deletion_alleles+len(re.findall('deletion', str(i)))
@@ -2501,76 +2528,93 @@ with open(str(population_summary_output), 'a+') as file:
 '\n            (3) % substitution alleles: ' + str(substitution_alleles) + ' (' + str(round((100*(substitution_alleles/total_alleles)),2)) + '% of total alleles)' +
 '\n            (4) % complex indel alleles: ' + str(indel_alleles) + ' (' + str(round((100*(indel_alleles/total_alleles)),2)) + '% of total alleles)')
     file.write("""\n\nII. Synopsis of Reads Lost to Analysis
-    'Top 10' reads among samples with (A) no hits, or (B) multiple hits, in reference database
-
+    Reads among the 'Top 10' reads are deprecated (not analyzed by Genotypes.py) if they fall into the following categories:
+    (A) no hits, (B) multiple hits, or (C) (if >1 hsp for 1 hit) overlapping hsp's in reference database and/or hsp span (end-to-end) that exceeds 1 kb
+    
     (A) Samples with reads among the 'top 10 most abundant reads', that did not map to the reference genome
-        (i) For the following sample IDs ("""+str(len(no_hits_for_any_top10_reads_samplename_list))+"""), NO reads among the "top 10 most abundant reads" could be mapped to the reference genome:\n""")
-    for i in no_hits_for_any_top10_reads_samplename_list:
-        file.write('             '+i)
+        (i) For the following sample IDs ("""+str(len(no_hits_for_any_top10_reads_samplename_list))+"""), NO reads among the "top 10 most abundant reads" could be mapped to the reference genome:""")
+    if len(no_hits_for_any_top10_reads_samplename_list) == 0:
+        file.write('\n               None')
+    else:
+        for i in no_hits_for_any_top10_reads_samplename_list:
+            file.write('\n             '+i)
     file.write('')
     
     file.write('\n        (ii) For the following sample IDs ('+str(len(no_hits_samplename_list))+'), the indicated reads among the "top 10 most abundant reads" did not map to the reference genome:')
-# Print this output to population summary
-    for i in no_hits_samplename_list:
-        R1_check = []
-        R2_check = []
-        file.write('\n             '+i+':')
-        for x in no_hits_R1_read_list:
-            if i == x.split(' ')[0]:
-                if 'R1' not in R1_check:
-                    R1_check.append('R1')
-                    file.write('\n               R1')
-                file.write('\n               '+x)
-        for x in no_hits_R2_read_list:
-            if i == x.split(' ')[0]:
-                if 'R2' not in R2_check:
-                    R2_check.append('R2')
-                    file.write('\n               R2')
-                file.write('\n               '+x)
-        file.write('')
-        
-    file.write('\n\n    (B) Samples with reads among the "top 10 most abundant reads", that mapped to multiple loci in the reference genome' +
-'\n        (i) For the following sample IDs ('+str(len(multiple_alignments_samplename_list))+'), the indicated reads among the "top 10 most abundant reads" mapped to more than one locus in the reference genome:')
-    if len(multiple_alignments_samplename_list) == 0:
+    # Print this output to population summary
+    if len(no_hits_samplename_list) == 0:
         file.write('\n               None')
     else:
-        file.write('\n             Sample IDs:')
-        for i in multiple_alignments_samplename_list:
+        for i in no_hits_samplename_list:
+            R1R2_check = []
+            file.write('\n             '+i+':')
+            for x in no_hits_list:
+                if i == x.split(' ')[0]:
+                    if 'R1+R2' not in R1R2_check:
+                        R1R2_check.append('R1+R2')
+                        file.write('\n               R1+R2')
+                    file.write('\n               '+x)
+            file.write('')
+        
+    file.write('\n\n    (B) Samples with reads among the "top 10 most abundant reads", that mapped to multiple loci in the reference genome' +
+'\n        (i) For the following sample IDs ('+str(len(multiple_alignments_hits_samplename_list))+'), the indicated reads among the "top 10 most abundant reads" mapped to more than one locus in the reference genome:')
+    if len(multiple_alignments_hits_samplename_list) > 0:
+        for i in multiple_alignments_hits_samplename_list:
             file.write('\n               '+i.strip()) 
-        file.write('\n\n             Details:')
-        for i in multiple_alignments_dict:
+        file.write('\n\n               Details:')
+        for i in multiple_alignments_hits_dict:
             file.write('\n               '+i+'\n               '+len(i)*'=')
-            R1_check = []
-            R2_check = []
-            for x in multiple_alignments_dict.get(i):
-                hit_list = []
-                hit_spec_list = []
-                for y in x:
-                    if re.search('Hit_num', y):
-                        hit_list.append(y)
-                if x[1].split('>')[1].split('_')[1] == 'R1':
-                    if 'R1' not in R1_check:
-                        R1_check.append('R1')
-                        file.write('\n               R1')
-                elif x[1].split('>')[1].split('_')[1] == 'R2':
-                    if 'R2' not in R2_check:
-                        R2_check.append('R2')
-                        file.write('\n               R2') 
-                if len(hit_list) == 2:
-                    hit_spec_list.append('Hit '+x[2].split('>')[1].split('<')[0]+': '+x[4].split('>')[1].split('<')[0]+': '+x[3].split('>')[1].split('<')[0]+x[5].split('>')[1].split('<')[0]+'-'+x[6].split('>')[1].split('<')[0])
-                    hit_spec_list.append(x[7].split('>')[1].split('<')[0]+'\n               '+x[9].split('>')[1].split('<')[0]+'\n               '+x[8].split('>')[1].split('<')[0])
-                    if bool(int(x[10].split('>')[1].split('<')[0]) > 2):
-                        hit_spec_list.append('\n               Hit 2: consult BLASTN file output (likely >1 high-scoring segment pair for this alignment)')
-                    else:
-                        hit_spec_list.append('\n               Hit '+x[10].split('>')[1].split('<')[0]+': '+x[12].split('>')[1].split('<')[0]+': '+x[11].split('>')[1].split('<')[0]+x[13].split('>')[1].split('<')[0]+'-'+x[14].split('>')[1].split('<')[0])
-                        hit_spec_list.append(x[15].split('>')[1].split('<')[0]+'\n               '+x[17].split('>')[1].split('<')[0]+'\n               '+x[16].split('>')[1].split('<')[0])
-                    file.write('\n               '+' '.join(x[1].split('>')[1].split('_')[:4])+' ... '+str(len(hit_list))+' hits\n               '+((len((' '.join(x[1].split('>')[1].split('_')[:4])))+len(str(len(hit_list)))+10)*'-'))
-                    for w in hit_spec_list:
-                        file.write('\n               '+str(w))
-                    file.write(''+'\n')
-                else:    
-                    file.write('\n               '+' '.join(x[1].split('>')[1].split('_')[:4])+' ... '+str(len(hit_list))+' hits\n               '+((len((' '.join(x[1].split('>')[1].split('_')[:4])))+len(str(len(hit_list)))+10)*'-'))
-                    file.write(''+'\n')
+            for x in multiple_alignments_hits_dict.get(i):
+                chunked_list = []
+                subchunk = 0
+                for index, y in enumerate(x):   
+                    if y.split('>')[0] == '<Hit_num':
+                        chunked_list.append(x[subchunk:index])
+                        subchunk = index
+                    if index == len(x)-1:
+                        chunked_list.append(x[subchunk:])
+                file.write('\n               Read: '+chunked_list[0][1].split('>')[1].split('<')[0])
+                for hit in chunked_list[1:]:
+                    file.write('\n               Hit '+hit[0].split('>')[1].split('<')[0]+': '+hit[2].split('>')[1].split('<')[0]+': '+hit[1].split('>')[1].split('<')[0]+', '+hit[5].split('>')[1].split('<')[0]+'-'+hit[6].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hit[7].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hit[9].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hit[8].split('>')[1].split('<')[0])
+                file.write('\n')
+            file.write('\n')
+    else:
+        file.write('\n               None')
+    file.write("""\n\n    (C) Samples with reads among the 'top 10 most abundant reads', with high-scoring pairs (hsp's) that were attempted 
+        for reconstruction with BLASTDBCMD sequence retrieval across hsp span, but deprecated because the hsp's
+        a) overlapped in the reference genome (potential artefact or signature of inversion, duplication and/or
+        b) exceeded 1 kb span (end-to-end)
+        Consult fasta.fa and/or BLASTN output if any of these reads is of further interest to examine manually:\n""")
+    file.write("\n        (i) For the following sample IDs ("+str(len(multiple_alignments_hsp_samplename_list))+"), the indicated reads among the 'top 10 most abundant reads' exhibited overlapping hsp's aligned to the reference genome:")
+    if len(multiple_alignments_hsp_invalid2_list) > 0:
+        for i in multiple_alignments_hsp_invalid2_list:
+            file.write('\n               '+i.strip())
+        file.write('\n\n               Details:')   
+        for i in multiple_alignments_hsp_dict_invalid2:
+            file.write('\n               '+i+'\n               '+len(i)*'=')
+            for x in multiple_alignments_hsp_dict_invalid2.get(i):
+                chunked_list = []
+                subchunk = 0
+                for index, y in enumerate(x):
+                    if y.split('>')[0] == '<Hsp_num':
+                        chunked_list.append(x[subchunk:index])
+                        subchunk = index
+                    if index == len(x)-1:
+                        chunked_list.append(x[subchunk:])
+                file.write('\n               Read: '+chunked_list[0][1].split('>')[1].split('<')[0])
+                file.write('\n               Hit: '+chunked_list[0][4].split('>')[1].split('<')[0]+': '+chunked_list[0][3].split('>')[1].split('<')[0])
+                for hsp in chunked_list[1:]:
+                    file.write('\n               Hsp '+hsp[0].split('>')[1].split('<')[0]+': '+hsp[1].split('>')[1].split('<')[0]+'-'+hsp[2].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hsp[3].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hsp[5].split('>')[1].split('<')[0])
+                    file.write('\n                   '+hsp[4].split('>')[1].split('<')[0])
+                file.write('\n')
+            file.write('\n')
+    else:
+        file.write('\n               None')
                 
 # Log file processing time duration                
 fileprocessingDuration = str(datetime.now()- startTime_fileprocessing).split(':')[0]+' hr|'+str(datetime.now() - startTime_fileprocessing).split(':')[1]+' min|'+str(datetime.now() - startTime_fileprocessing).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_fileprocessing).split(':')[2].split('.')[1]+' microsec'
