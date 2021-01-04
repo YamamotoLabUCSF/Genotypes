@@ -871,7 +871,7 @@ elif user_input == 'List':
     ----------------------------------
     User-specified input (list format)
     ----------------------------------
-    Please paste a single list of input values directly at the command line prompt, specifying the following 7 values.
+    Please paste a single list of input values directly at the command line prompt, specifying the following 8 values.
     Press 'Enter' twice to complete.
 
     1-Location of OUTPUT DIRECTORY for output files
@@ -1204,7 +1204,7 @@ with open(filename, 'a') as f:
 "\n    blastn_path: "+ str(blastn_path) +
 "\n    db_path: "+ str(db_path) +
 "\n    db_prefix: "+ db_prefix +
-"\n    blastdbcmd_path: "+ str(blastdbcmd_path), file = f )
+"\n    blastdbcmd_path: "+ str(blastdbcmd_path), file = f)
     try:
         guideRNA_seq
     except NameError:
@@ -2167,6 +2167,7 @@ imputed_genotypes_output = Path(str(output_path)+'/'+processdate+'_genotypes.txt
     # imputedgenotypes_multizygous
     # imputedgenotypes_homowildtype
     # imputedgenotypes_unclear
+# Call upon allele_output function to report alleles and inferred genotypes based on inferred genotype class
 with open(str(imputed_genotypes_output), 'a+') as file:
     file.write('Genotypes.py: Genotypes\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) + '\n\n')
     if len(imputedgenotypes_homodeletion) > 0:
