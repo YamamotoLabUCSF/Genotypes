@@ -1,6 +1,6 @@
 # <span style="color:blueviolet">Genotypes.py</span>
 
-Define alleles for deeply sequenced genetic loci (PCR amplicons), and summarize loss or gain of transcription factor binding site (TFBS) motif matches relative to reference DNA sequence(s).  
+Define alleles for deeply sequenced genetic loci (PCR amplicons), and extrapolate corresponding locus-specific genotypes for individual samples based on defined allele frequencies.
 <br/> 
 ## <span style="color:blueviolet">Table of contents</span>
 * [Background](#background)  
@@ -25,10 +25,10 @@ Define alleles for deeply sequenced genetic loci (PCR amplicons), and summarize 
 * [Code launch notes](#code-launch-notes)  
 	* [Launching .py program](#launching-py-program)
 		* [Command line .py](#command-line-py)
-		* [Command line .py in virtual environmnet](#command-line-py-in-virtual-environment)
+		* [Command line .py in virtual environment](#command-line-py-in-virtual-environment)
 	* [Launching .ipynb program](#launching-ipynb-program)
 		* [Jupyter Notebook .ipynb](#jupyter-notebook-ipynb)
-		* [Jupyter Notebook .ipynb in virtual environmnet](#jupyter-notebook-ipynb-in-virtual-environment)
+		* [Jupyter Notebook .ipynb in virtual environment](#jupyter-notebook-ipynb-in-virtual-environment)
 * [Operation notes](#operation-notes)  
 * [Input notes](#input-notes)  
 * [Output notes](#output-notes)  
@@ -39,7 +39,7 @@ Define alleles for deeply sequenced genetic loci (PCR amplicons), and summarize 
 
 ## <span style="color:blueviolet">Background</span>  
 
-This script returns allele definitions (and inferred genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify a BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, substitution, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also imputes genotype (homozygous, heterozygous) across the sequenced locus for each sample.
+This script returns allele definitions (and inferred genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify a BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, substitution, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also extrapolates genotype (homozygous, heterozygous) across the sequenced locus for each sample.
 <br clear="all" />
 <img src="Genotypes_img/Genotypes_thumbnail_sketch.png" align="left" width="750">
 <br clear="all" />  
@@ -47,7 +47,7 @@ This script returns allele definitions (and inferred genotypes) for amplicons se
 ## <span style="color:blueviolet">Features</span>  
 * Automates allele definitions and imputes genotypes at specific loci, for amplicons deeply sequenced on Illumina® platforms
 * Key input: demultiplexed fastq files
-* Key outputs: sequence alignments for candidate alleles (reads ranked by abundance), with optional DNA sub-sequence(s) mapped on alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA sub-sequence(s) to test for presence/ablation); imputed genotypes
+* Key outputs: sequence alignments for candidate alleles (reads ranked by abundance), with optional DNA sub-sequence(s) mapped on alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA sub-sequence(s) to test for presence/ablation); inferred genotypes
 
 ## <span style="color:blueviolet">Requirements</span>  
 * Python 3.7 or higher - instructions for install below
@@ -56,11 +56,11 @@ This script returns allele definitions (and inferred genotypes) for amplicons se
 
   
 ## <span style="color:blueviolet">Synopsis</span>
-**This script returns imputed genotypes for sample-specific amplicons deeply sequenced on Illumina® sequencing platforms.**
+**This script returns extrapolated genotypes for sample-specific amplicons deeply sequenced on Illumina® sequencing platforms.**
 >(see '[Output notes](#output-notes)' for file output details).  
 
 
-**Users are asked for paths to (1) an output directory, (2) fastq directory (sample sequence sources), (3) BLASTN executable, and (4) BLAST reference sequence database (+prefix common to database files), as well as (optional) DNA sub-sequence(s) to query in read alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA test sequence(s)).**
+**Users are asked for paths to (1) an output directory, (2) fastq directory (sample sequence sources), (3) BLASTN and BLASTDBCMD executables, and (4) BLAST reference sequence database (+prefix common to database files), as well as (optional) DNA sub-sequence(s) to query in read alignments (*e.g.*, Cas9 guide RNA sequence(s), DNA test sequence(s)).**
 
 >(see '[Input notes](#input-notes)' for details).
     
@@ -515,7 +515,7 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
     Altschul S.F. et al. (1990) "Basic local alignment search tool")*    
     
     
- 4. **return alignments as alleles & imputed genotypes;**  
+ 4. **return alignments as alleles & inferred genotypes;**  
  **(optional) map sub-sequence(s) onto alleles:**  
     -  for mutants, map location of Cas9 cut(s) and indel(s) relative to wt,
        if Cas9 guide sequence(s) supplied by user  
@@ -525,7 +525,7 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
        
  5. **provide overall population statistics:**  
  
-   (a) total sample # for which genotypes were imputed  
+   (a) total sample # for which genotypes were extrapolated  
    (b) distribution of genotypes among samples (homozygous, heterozygous, *etc.*)  
    (c) estimated wild-type *vs.* mutant allele frequencies  
    (d) summary of samples and reads that either had 'no hit' in reference database provided to BLASTN,
@@ -584,15 +584,15 @@ These include:
 4. **allele\_evidence.pdf**  
         (output of script operation on blastn\_alignments.txt, plots of calculated read/allele frequencies)  
         
-5. **imputed\_genotypes.txt**  
+5. **genotypes.txt**  
         (output of script operation on blastn\_alignments.txt, samples returned in ranked order based on  
-        genotype imputation)  
+        genotype extrapolation)  
         
 6. **allele\_definitions.csv**  
         (tabular representation of allele data for all samples)  
 
 7. **population\_summary.txt**  
-        (output of script operation on imputed\_genotypes.txt)  
+        (output of script operation on genotypes.txt)  
         
 8. **script\_metrics.txt**  
         (summary/analysis of script operation metrics [metadata])  
@@ -606,13 +606,13 @@ These include:
                           `-----allele_evidence.pdf  
                           `-----blastn_alignments.txt  
                           `-----fasta.fa  
-                          `-----imputed_genotypes.txt  
+                          `-----genotypes.txt  
                           `-----population_summary.txt  
                           `-----script_metrics.txt
 
 
 ## <span style="color:blueviolet">Visual summary of key script operations</span>
-In short, sequencing data in a sample-specific **fastq file** (*e.g.*, below), are converted to user-interpretable  genotype imputations (**key output files**, below), for 100s to 1000s of samples.    
+In short, sequencing data in a sample-specific **fastq file** (*e.g.*, below), are converted to user-interpretable  genotype extrapolations (**key output files**, below), for 100s to 1000s of samples.    
   
 <img src="Genotypes_img/fastq_example.png" align="left" width="700">
 <br clear="all" />  
@@ -621,7 +621,7 @@ In short, sequencing data in a sample-specific **fastq file** (*e.g.*, below), a
 ------
 #### Key output files:  
 ##### allele_definitions.txt 
-Samples are reported with sequence alignments to document alleles, along with imputed genotypes. 
+Samples are reported with sequence alignments to document alleles, along with inferred genotypes. 
 <img src="Genotypes_img/genotype_example.png" align="left" width="800">
 <br clear="all" />
 ##### allele_evidence.pdf
