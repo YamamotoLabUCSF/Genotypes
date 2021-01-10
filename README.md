@@ -408,6 +408,7 @@ followed by your administrator password
 
 * Locally install **BLASTN** and **BLASTDBCMD** (see Requirements)  
 <img src="Genotypes_img/BLASTN_thumbnail.png" align="left" width="100">
+<img src="Genotypes_img/BLASTDBCMD_thumbnail.png" align="left" width="100">
 <br clear="all" />
 
 * Download or create a **reference sequence database** (required for BLASTN alignment operations)  
