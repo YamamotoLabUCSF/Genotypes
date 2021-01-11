@@ -710,14 +710,41 @@ def frequency_plots():
                     else:
                         pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))     
                     pdf.ln(3)
-                    pdf.set_font("Courier", size=4)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1])
-                    pdf.ln(3)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2])
-                    pdf.ln(3)
-                    pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3])
-                    allele_count_R1R2 = allele_count_R1R2+1
-                    pdf.ln(4)
+                    pdf.set_font("Courier", size=6)
+                    if len(imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]) > 200:
+                        string = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]
+                        string2 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2]
+                        string3 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3]
+                        chunks = range(12, len(string), 100)
+                        for index, chunk in enumerate(chunks):
+                            if index == 0:
+                                pdf.write(5, string[chunk-12:chunk+100])
+                                pdf.ln(3)
+                                pdf.write(5, string2[chunk-12:chunk+100])
+                                pdf.ln(3)
+                                pdf.write(5, string3[chunk-12:chunk+100])
+                            elif 0 < index < (len(chunks)-1):
+                                pdf.write(5, '\n'+4*' '+'query'+'  '+string[chunk:chunk+100])
+                                pdf.ln(3)
+                                pdf.write(5, 11*' '+string2[chunk:chunk+100])
+                                pdf.ln(3)
+                                pdf.write(5, 'reference'+'  '+string3[chunk:chunk+100])
+                            else:
+                                pdf.write(5, '\n'+4*' '+'query'+'  '+string[chunk:])
+                                pdf.ln(3)
+                                pdf.write(5, 11*' '+string2[chunk:])
+                                pdf.ln(3)
+                                pdf.write(5, 'reference'+'  '+string3[chunk:])
+                        allele_count_R1R2 = allele_count_R1R2+1
+                        pdf.ln(4)
+                    else:
+                        pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1])
+                        pdf.ln(3)
+                        pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2])
+                        pdf.ln(3)
+                        pdf.write(5, imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3])
+                        allele_count_R1R2 = allele_count_R1R2+1
+                        pdf.ln(4)
         pdf.ln(5)
         pdf.image(str(plot_name), x = None, y = None, w = 195, h = 0, type = '', link = '')
         pdf.output(str(pdf_output))
@@ -1613,7 +1640,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     if result:
                         if hsp in range(0,len(hsp_from_to_list),2):
                             intervening_bases = result.group(1)
-                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit, gap_to_next_hsp+len(intervening_bases)))
+                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp+len(intervening_bases)))
                             try:
                                 retrieved_sequence_updated
                             except NameError:
@@ -1622,9 +1649,9 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                             else:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
                         else:
-                            hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,gap_to_next_hsp)) 
+                            hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp)) 
                     else:
-                        hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,gap_to_next_hsp))
+                        hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp))
                     # Also determine whether insertion(s) exist in hsp qseq relative to hsp hseq: if the hsp hseq sequence has any '-' in it, this means that the qseq has insertion(s) relative to the qseq
                     # Check for '-' in hseq for any of the hsp's. If any hsp hseq has '-', to accurately account for these changes in this hseq span, need to lift this qseq span entirely from the blastn file.
                     
