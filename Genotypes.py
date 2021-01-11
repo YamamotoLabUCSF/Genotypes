@@ -1510,6 +1510,12 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
     for read in multiple_alignments_hsp_dict_valid2.get(i):
         blastdbcmd_alignments_list_read_sublist = []
         intervening_bases = ''
+        try:
+            retrieved_sequence_updated
+        except NameError:
+            pass
+        else:
+            del retrieved_sequence_updated
         # this sublist ultimately has 10 items; 1st 5 come from multiple_alignments_hsp_dict_valid, next 5 come from blastdbcmd & Genotypes.py in upcoming code below
         blastdbcmd_alignments_list_read_sublist = [read[0]]+[read[1]]+[read[2]]+[read[3]]+[read[4]]
         coordinate_range_exceeds_1kb_threshold = False
@@ -1536,7 +1542,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
             if i in multiple_alignments_hsp_dict_invalid2:
                 multiple_alignments_hsp_dict_invalid2[i].append(read)
             else:
-                multiple_alignments_hsp_dict_invalid2["{0}".format(i)] = [read]     
+                multiple_alignments_hsp_dict_invalid2["{0}".format(i)] = [read]
     # Extract sequence spanning multiple high-scoring pairs (hsp), (if within 1 kb), using blastdbcmd
     # blastdbcmd format is: blastdbcmd -db database -dbtype nucl -entry sequence_identifier -range coordinate_range
     # for example: blastdbcmd -db database -dbtype nucl -entry chr6 -range 20000-20500
@@ -1573,6 +1579,11 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     result = ''
                     hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
                     hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
+                    hsp_hit = read[10+(hsp*6)].split('>')[1].split('<')[0]
+                    if '-' in hsp_hit:
+                        hsp_hit_adjustment = 'hsp query has insertion(s) relative to hit'
+                    else:
+                        hsp_hit_adjustment = 'no hsp query insertion(s) relative to hit'
                     if hsp < len(hsp_from_to_list)-1:
                         gap_to_next_hsp = coordinates_integer_list_sorted[hsp+1][0] - coordinates_integer_list_sorted[hsp][1] - 1
                     else:
@@ -1602,16 +1613,21 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     if result:
                         if hsp in range(0,len(hsp_from_to_list),2):
                             intervening_bases = result.group(1)
-                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,intervening_bases,gap_to_next_hsp+len(intervening_bases)))
-                            if retrieved_sequence_updated:
+                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit, gap_to_next_hsp+len(intervening_bases)))
+                            try:
+                                retrieved_sequence_updated
+                            except NameError:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
                                 # get indices of added
                             else:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
                         else:
-                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp)) 
+                            hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,gap_to_next_hsp)) 
                     else:
-                        hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp))
+                        hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,gap_to_next_hsp))
+                    # Also determine whether insertion(s) exist in hsp qseq relative to hsp hseq: if the hsp hseq sequence has any '-' in it, this means that the qseq has insertion(s) relative to the qseq
+                    # Check for '-' in hseq for any of the hsp's. If any hsp hseq has '-', to accurately account for these changes in this hseq span, need to lift this qseq span entirely from the blastn file.
+                    
             # alternatively, adjust hsp call series based on new index if needed:
             else:
                 hsp_queries_and_midlines_list = []
@@ -1623,6 +1639,11 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     result = ''
                     hsp_query = read[9+(hsp*6)].split('>')[1].split('<')[0]
                     hsp_midline = read[11+(hsp*6)].split('>')[1].split('<')[0]
+                    hsp_hit = read[10+(hsp*6)].split('>')[1].split('<')[0]
+                    if '-' in hsp_hit:
+                        hsp_hit_adjustment = 'hsp query has insertion(s) relative to hit'
+                    else:
+                        hsp_hit_adjustment = 'no hsp query insertion(s) relative to hit'
                     if hsp_count < len(hsp_from_to_list)-1:
                         gap_to_next_hsp = coordinates_integer_list_sorted[hsp_count+1][0] - coordinates_integer_list_sorted[hsp_count][1] - 1
                     else:
@@ -1653,21 +1674,23 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     if result:
                         if hsp in range(0,len(hsp_from_to_list),2):
                             intervening_bases = result.group(1)
-                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,intervening_bases,gap_to_next_hsp+len(intervening_bases)))
-                            if retrieved_sequence_updated:
+                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp+len(intervening_bases)))
+                            try:
+                                retrieved_sequence_updated
+                            except NameError:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
                                 # get indices of added
                             else:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
                         else:
-                            hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp)) 
+                            hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp)) 
                     else:
-                        hsp_queries_and_midlines_list.append((hsp_query,hsp_midline,'',gap_to_next_hsp))
+                        hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp))
             # retrieved_sequence
             # reconstructed alignment midline
-            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][3]*' ')) for hsp in range(len(hsp_from_to_list))])
+            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][2]+(hsp_queries_and_midlines_list[hsp][5]*' ')) for hsp in range(len(hsp_from_to_list))])
             # reconstructed alignment sequence
-            reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+hsp_queries_and_midlines_list[hsp][2]+(hsp_queries_and_midlines_list[hsp][3]*'-')) for hsp in range(len(hsp_from_to_list))])
+            reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][5]*'-')) for hsp in range(len(hsp_from_to_list))])
             # provide reconstituted 'hsp hit from-to'
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-from>'+coordinate_range.split('-')[0]+'</Hsp_hit-from>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_hit-to>'+coordinate_range.split('-')[1]+'</Hsp_hit-to>')
@@ -1675,9 +1698,43 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
             try:
                 retrieved_sequence_updated
             except NameError:
-                blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
+                # check whether any hsp has a retrieved sequence alignment needing adjustment (in the retrieved sequence) across the hsp span
+                adjustment_required = False
+                for index, hsp in enumerate(hsp_queries_and_midlines_list):
+                    if 'hsp query has insertion(s) relative to hit' in hsp:
+                        adjustment_required = True
+                if adjustment_required == True:
+                    for index, hsp in enumerate(hsp_queries_and_midlines_list):
+                        if 'hsp query has insertion(s) relative to hit' in hsp:
+                            hit_sequence = hsp_queries_and_midlines_list[index][3].replace('-','')
+                            try:
+                                retrieved_sequence_updated
+                            except NameError:
+                                retrieved_sequence_updated = retrieved_sequence.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                            else:
+                                 retrieved_sequence_updated = retrieved_sequence_updated.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
+                elif adjustment_required == False:
+                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
             else:
-                blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
+                # check whether any hsp has a retrieved sequence alignment needing adjustment (in the retrieved sequence [already updated with any insertion(s) in the span between hsp's]) across the hsp span
+                adjustment_required = False
+                for index, hsp in enumerate(hsp_queries_and_midlines_list):
+                    if 'hsp query has insertion(s) relative to hit' in hsp:
+                        adjustment_required = True
+                if adjustment_required == True:
+                    for index, hsp in enumerate(hsp_queries_and_midlines_list):
+                        if 'hsp query has insertion(s) relative to hit' in hsp:
+                            hit_sequence = hsp_queries_and_midlines_list[index][3].replace('-','')
+                            try:
+                                retrieved_sequence_updated2
+                            except NameError:
+                                retrieved_sequence_updated2 = retrieved_sequence_updated.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                            else:
+                                 retrieved_sequence_updated2 = retrieved_sequence_updated2.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
+                elif adjustment_required == False:
+                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_midline>'+reconstructed_midline+'</Hsp_midline>')
             blastdbcmd_alignments_list.append(blastdbcmd_alignments_list_read_sublist)
 
@@ -2194,7 +2251,9 @@ with open(str(imputed_genotypes_output), 'a+') as file:
     if len(imputedgenotypes_biallelic_substitution) > 0:
         file.write('\n\nBIALLELIC SUBSTITUTION\n......................\n\n')
         allele_output(imputedgenotypes_biallelic_substitution)
+    if len(imputedgenotypes_biallelic_other) > 0:
         file.write('\n\nBIALLELIC MUTANT (VARIOUS)\n..........................\n\n')
+        allele_output(imputedgenotypes_biallelic_other)
     if len(imputedgenotypes_heterodeletion) > 0:
         file.write('\n\nHETEROZYGOUS DELETION\n.....................\n\n')
         allele_output(imputedgenotypes_heterodeletion)
