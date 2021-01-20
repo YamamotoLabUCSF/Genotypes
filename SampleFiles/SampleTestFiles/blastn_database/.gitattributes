@@ -1,0 +1,6 @@
+GRCh38.nhr filter=lfs diff=lfs merge=lfs -text
+GRCh38.nin filter=lfs diff=lfs merge=lfs -text
+GRCh38.nog filter=lfs diff=lfs merge=lfs -text
+GRCh38.nsd filter=lfs diff=lfs merge=lfs -text
+GRCh38.nsi filter=lfs diff=lfs merge=lfs -text
+GRCh38.nsq filter=lfs diff=lfs merge=lfs -text
