@@ -711,7 +711,7 @@ def frequency_plots():
                         pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))     
                     pdf.ln(3)
                     pdf.set_font("Courier", size=6)
-                    if len(imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]) > 160:
+                    if len(imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]) > 200:
                         string = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]
                         string2 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2]
                         string3 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3]
