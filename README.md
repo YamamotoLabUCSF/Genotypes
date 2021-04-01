@@ -293,7 +293,7 @@ You are now ready to install **additional Python modules** that Genotypes.py req
 	
 2. To check that the required Genotypes.py Python modules were installed properly, now issue the follow command:
 	
-	`$ pip3 list | grep -E 'certifi|cycler|fpdf|kiwisolver|matplotlib|numpy|pandas|Pillow|psutil|pyparsing|PyPDF2|python-dateutil|pytz|scipy|six'`
+	`$ pip3 list | grep -E 'certifi|cycler|fpdf|kiwisolver|matplotlib|numpy|pandas|psutil|pyparsing|PyPDF2|python-dateutil|pytz|scipy|six'`
 	
 	If the library install was a success, the output will read the following (note the package version numbers may differ, but all packages should be listed):
 	  
@@ -306,7 +306,6 @@ You are now ready to install **additional Python modules** that Genotypes.py req
   |matplotlib|      3.3.2|  
   |numpy|           1.19.2|  
   |pandas|          1.1.2|  
-  |Pillow|          7.2.0|  
   |psutil|          5.7.2|  
   |pyparsing|       2.4.7|  
   |PyPDF2|          1.26.0|  
@@ -362,7 +361,6 @@ You are now ready to install **additional Python modules** that Genotypes.py req
   |matplotlib|      3.3.2|  
   |numpy|           1.19.2|  
   |pandas|          1.1.2|  
-  |Pillow|          7.2.0|  
   |psutil|          5.7.2|  
   |pyparsing|       2.4.7|  
   |PyPDF2|          1.26.0|  
