@@ -294,7 +294,11 @@ You are now ready to install **additional Python modules** that Genotypes.py req
 2. To check that the required Genotypes.py Python modules were installed properly, now issue the follow command:
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 	`$ pip3 list | grep -E 'certifi|cycler|fpdf|kiwisolver|matplotlib|numpy|pandas|Pillow|psutil|pyparsing|PyPDF2|python-dateutil|pytz|scipy|six'`
+=======
+	`$ pip3 list | grep -E 'certifi|cycler|fpdf|kiwisolver|matplotlib|numpy|pandas|psutil|pyparsing|PyPDF2|python-dateutil|pytz|scipy|six'`
+>>>>>>> 1ebe647dddea62a25020630d658072641045da64
 =======
 	`$ pip3 list | grep -E 'certifi|cycler|fpdf|kiwisolver|matplotlib|numpy|pandas|psutil|pyparsing|PyPDF2|python-dateutil|pytz|scipy|six'`
 >>>>>>> 1ebe647dddea62a25020630d658072641045da64
@@ -311,7 +315,10 @@ You are now ready to install **additional Python modules** that Genotypes.py req
   |numpy|           1.19.2|  
   |pandas|          1.1.2|  
 <<<<<<< HEAD
+<<<<<<< HEAD
   |Pillow|          7.2.0|  
+=======
+>>>>>>> 1ebe647dddea62a25020630d658072641045da64
 =======
 >>>>>>> 1ebe647dddea62a25020630d658072641045da64
   |psutil|          5.7.2|  
@@ -370,7 +377,10 @@ You are now ready to install **additional Python modules** that Genotypes.py req
   |numpy|           1.19.2|  
   |pandas|          1.1.2|  
 <<<<<<< HEAD
+<<<<<<< HEAD
   |Pillow|          7.2.0|  
+=======
+>>>>>>> 1ebe647dddea62a25020630d658072641045da64
 =======
 >>>>>>> 1ebe647dddea62a25020630d658072641045da64
   |psutil|          5.7.2|  
