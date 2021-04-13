@@ -5,13 +5,7 @@ kiwisolver==1.2.0
 matplotlib==3.3.2
 numpy==1.19.2
 pandas==1.1.2
-<<<<<<< HEAD
-<<<<<<< HEAD
-Pillow==7.2.0
-=======
->>>>>>> 1ebe647dddea62a25020630d658072641045da64
-=======
->>>>>>> 1ebe647dddea62a25020630d658072641045da64
+Pillow>=8.1.10
 psutil==5.7.2
 pyparsing==2.4.7
 PyPDF2==1.26.0
