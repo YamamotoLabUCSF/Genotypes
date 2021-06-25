@@ -1,6 +1,6 @@
 # <span style="color:blueviolet">Genotypes.py</span>
 
-Define alleles for deeply sequenced genetic loci (PCR amplicons), and extrapolate corresponding locus-specific genotypes for individual samples based on defined allele frequencies.
+Define alleles for deeply sequenced genetic loci (PCR amplicons), and infer corresponding locus-specific genotypes for individual samples based on defined allele frequencies.
 <br/> 
 ## <span style="color:blueviolet">Table of contents</span>
 * [Background](#background)  
@@ -39,7 +39,7 @@ Define alleles for deeply sequenced genetic loci (PCR amplicons), and extrapolat
 
 ## <span style="color:blueviolet">Background</span>  
 
-This script returns allele definitions (and inferred genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify a BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, substitution, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also extrapolates genotype (homozygous, heterozygous) across the sequenced locus for each sample.
+This script returns allele definitions (and inferred genotypes) for amplicons sequenced by Illumina® short-read ('next-generation') sequencing technologies. Users input demultiplexed fastq files for sequenced amplicons and specify a BLASTN database to be used as an alignment reference, and the script completes allele definitions (wild-type, deletion, insertion, substitution, *etc.*) for the sequenced locus based on relative read abundance in each fastq file. Based on allele definitions, the script also infers genotype (homozygous, heterozygous) across the sequenced locus for each sample.
 <br clear="all" />
 <img src="Genotypes_img/Genotypes_thumbnail_sketch.png" align="left" width="750">
 <br clear="all" />  
@@ -52,11 +52,11 @@ This script returns allele definitions (and inferred genotypes) for amplicons se
 ## <span style="color:blueviolet">Requirements</span>  
 * Python 3.7 or higher - instructions for install below
 * Python libraries (numpy, pip, psutil, scipy, setuptools, and wheel) - instructions for install below
-* BLASTN & BLASTDBCMD (NCBI) (available for OS-appropriate download as part of BLAST+ suite @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>) - For further notes see also [2.4 External dependencies](#24-external-dependencies) for exta notes on downloading & installing external dependencies (BLAST)
+* BLASTN & BLASTDBCMD (NCBI) (available for OS-appropriate download as part of BLAST+ suite @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>) - For further guidelines, see also [2.4 External dependencies](#24-external-dependencies) for exta notes on downloading & installing external dependencies (BLAST)
 
   
 ## <span style="color:blueviolet">Synopsis</span>
-**This script returns extrapolated genotypes for sample-specific amplicons deeply sequenced on Illumina® sequencing platforms.**
+**This script returns infers genotypes for sample-specific amplicons deeply sequenced on Illumina® sequencing platforms.**
 >(see '[Output notes](#output-notes)' for file output details).  
 
 
@@ -82,7 +82,7 @@ The programs are available for use either individually or packaged into a virtua
 
 * Detailed instuctions on Virtual machine download and setup at <a href="https://doi.org/10.5281/zenodo.3406861">Download Alleles\_and\_altered\_motifs virtual machine</a> from Zenodo,  DOI 10.5281/zenodo.3406861
 
-* Note: Running the virtual machine requires virtualization software, such as Oracle VM VirtualBox available for download at <a href="https://www.virtualbox.org/">Download virtualbox Software</a> https://www.virtualbox.org/
+* Note: Running the virtual machine requires virtualization software, such as Oracle VM VirtualBox, available for download at <a href="https://www.virtualbox.org/">Download virtualbox Software</a> https://www.virtualbox.org/
 
 
 Linux and Mac users can also follow the steps below to install SampleSheet, Genotypes, and CollatedMotifs. If you are running Windows, you can follow the steps below to install SampleSheet and Genotypes (without CollatedMotifs).
@@ -185,7 +185,7 @@ Anaconda with Jupyter Notebook on Linux
 
 Anaconda with Jupyter Notebook on Windows for use with SampleSheet.py and Genotypes.py only:
   			
-* Anaconda with Jupyter Notebook installed on a Windows OS will make a separate “Anaconda3 (64 bit)” folder available through the start menu and is kept separate from any other version of Python or Jupyter Notebook on your system. In the Anaconda 3 (64 bit) folder the user will find:
+* Anaconda with Jupyter Notebook installed on a Windows OS will make a separate “Anaconda3 (64 bit)” folder available through the start menu and is kept separate from any other version of Python or Jupyter Notebook on your system. In the Anaconda 3 (64 bit) folder, the user will find:
 
 >Anaconda PowerShell Prompt (Anaconda 3)     
 >Jupyter Notebook (Anaconda 3)   
@@ -208,7 +208,7 @@ Jupyter Notebook can be run through Anaconda in Windows by opening the “Jupyte
 	
 **Confirming Jupyter Notebook**   
   			
- - Users can check Jupyter Notebook locations the terminal (Mac/Linux OS) or Anaconda PowerShell Prompt (Windows OS) by issuing the following command:  
+ - Users can check Jupyter Notebook locations in Terminal (Mac/Linux OS) or Anaconda PowerShell Prompt (Windows OS) by issuing the following command:  
 	`$ which jupyter-notebook` (Mac/Linux OS)  
 	`$ where.exe jupyter-notebook` (Windows PowerShell)  
 	
@@ -279,7 +279,7 @@ You are now ready to install **additional Python modules** that Genotypes.py req
 
 * Option A) Use the pip3 command to automatically download the required libraries from the Python Package Index repository ([PyPI](https://pypi.org/)) (https://pypi.org/) and install them into your primary Python 3 directory from the requirements file 'Genotypes_requirements.txt'. This method is the most simple to execute and will be outlined first.
 
-* Option B) Install a Python **virtual environment** (self-contained 'directory' with all the Python modules needed to run Genotypes.py). This method retains your original Python 3 install unchanged, protecting it from any possible library version conflicts that may arise from installing or updating the Genotypes.py required libraries.  
+* Option B) Install a Python **virtual environment** (self-contained 'directory' with all the Python modules needed to run Genotypes.py). This method retains your original Python 3 installation unchanged, protecting it from any possible library version conflicts that may arise from installing or updating the Genotypes.py required libraries.  
   
 ##### <span style="color:mediumorchid">Libraries in default Python</span>  
   
@@ -324,7 +324,7 @@ You are now ready to install **additional Python modules** that Genotypes.py req
 	
 	pip3 is Python 3's installation manager, and as long as there is an internet connection available, pip3 or pip will access the specified module from PyPI (here, virtualenv) and install it for access by Python 3.
 
-2. Next, choose a **directory location** on your machine where you would like to install the files associated with a virtual environment.  This can be any folder/directory location you like (for example, you may have a favorite directory where other Python virtual environments are stored).  Alternatively, simply create the Python virtual environment in the Genotypes directory you created above (in section 2d).  At the command line, navigate to the location of this directory.
+2. Next, choose a **directory location** on your machine where you would like to install the files associated with a virtual environment.  This can be any folder/directory location you like (for example, you may have a favorite directory where other Python virtual environments are stored).  Alternatively, simply create the Python virtual environment in the Genotypes directory you created above (in section 2.2.d).  At the command line, navigate to the location of this directory.
 	* For example:
 		* To navigate to the directory named 'GenotypesCode':  
 		`$ cd ~/Documents/GenotypesCode`
@@ -418,7 +418,7 @@ followed by your administrator password
 <img src="Genotypes_img/BLASTN_reference_database_thumbnail.png" align="left" width="150">
 <br clear="all" />  
 * See [Requirements](#requirements) 
-* *Note, separate installation of these external dependencies is not necessary if using the virtual machine file Alleles\_and\_altered\_motifs.ovf*
+* *Note, separate installation of these external dependencies is not necessary if using the virtual machine file Alleles\_and\_altered\_motifs.ova*
 
 
 **Additional notes on: </sup> BLAST+ suite** available for download @ <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download">Download BLAST Software and Databases</a>)  
@@ -433,7 +433,7 @@ followed by your administrator password
 
 ## <span style="color:blueviolet">Code launch notes</span>  
   
-Code is available as a Jupyter Notebook file (**Genotypes.ipynb**) or as a Python program file (**Genotypes.py**) for direct use, or pre-packaged with all dependencies as an Open Virtualization Format file for virtual machines (**Alleles\_and\_altered\_motifs.ovf**).  
+Code is available as a Jupyter Notebook file (**Genotypes.ipynb**) or as a Python program file (**Genotypes.py**) for direct use, or pre-packaged with all dependencies as an Open Virtualization Format file for virtual machines (**Alleles\_and\_altered\_motifs.ova**).  
 
 ### <span style="color:mediumorchid">Python program (Genotypes.py) or Jupyter Notebook (Genotypes.ipynb)</span>
 
@@ -488,7 +488,7 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
 	(b) hover your mouse over **'Change Kernel'** (bottom option of drop-down menu) to identify the kernels available to the Notebook  
 	(c) choose **Genotypes_env** as the kernel  
 	 
-	 If Genotypes\_env does not appear as a kernel option, troubleshooting is needed to either create the CollatedMoitfs\_env virtual environment, or to make Jupyter Notebook aware of the existence of the Genotypes_env virtual environment.
+	 If Genotypes\_env does not appear as a kernel option, troubleshooting is needed to either create the Genotypes\_env virtual environment, or to make Jupyter Notebook aware of the existence of the Genotypes_env virtual environment.
 
 4.  If these steps have been accomplished successfully, you are now ready to use the Genotypes.ipynb Jupyter Notebook.  Be prepared to provide required input variables as detailed below in **[Input Notes](#input-notes)**.
 <br>  
@@ -529,8 +529,7 @@ In [System setup](#system-setup) above, you downloaded and installed Python 3 & 
    (d) summary of samples and reads that either had 'no hit' in reference database provided to BLASTN,
        or multiple hits (>1)  
 <br clear="all" />        
-**Operations overview:** *See 
-Input notes' and 'Output notes'*  
+**Operations overview:** *See Input notes' and 'Output notes'*    
 Files labeled *i-iv* below: Key output files containing script interpretations of sample alleles & genotypes.
 <img src="Genotypes_img/Genotypes_thumbnail_2.png" align="left" width="650">
 <br clear="all" />
@@ -584,7 +583,7 @@ These include:
         
 5. **genotypes.txt**  
         (output of script operation on blastn\_alignments.txt, samples returned in ranked order based on  
-        genotype extrapolation)  
+        genotype inference)  
         
 6. **allele\_definitions.csv**  
         (tabular representation of allele data for all samples)  
@@ -610,7 +609,7 @@ These include:
 
 
 ## <span style="color:blueviolet">Visual summary of key script operations</span>
-In short, sequencing data in a sample-specific **fastq file** (*e.g.*, below), are converted to user-interpretable  genotype extrapolations (**key output files**, below), for 100s to 1000s of samples.    
+In short, sequencing data in a sample-specific **fastq file** (*e.g.*, below), are converted to user-interpretable genotype inferences (**key output files**, below), for 100s to 1000s of samples.    
   
 <img src="Genotypes_img/fastq_example.png" align="left" width="700">
 <br clear="all" />  
