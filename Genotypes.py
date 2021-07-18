@@ -24,7 +24,7 @@
 
 # Operation notes:
 # ==============================================
-# This script accepts text to standard input, and returns allele definitions (and extrapolated genotypes) for samples
+# This script accepts text to standard input, and returns allele definitions (and inferred genotypes) for samples
 # from a demultiplexed NGS fastq dataset. Required: Python 3.7.0 or higher + 3rd-party libraries NumPy, SciPy, psutil,
 # fdpf, PyPDF2; BLASTN & BLASTDBCMD (NCBI) locally installed
 # What does this script do?
@@ -704,26 +704,20 @@ def frequency_plots():
                         pdf.ln(3)
                     else:
                         pass
-                    pdf.set_font("Arial", size=6)
-                    if imputedgenotypes_dict[samplename][x][1].get('allele_specs') is not None:
-                        pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type')+', '+imputedgenotypes_dict[samplename][x][1].get('allele_specs'))
-                    else:
-                        pdf.write(5, 'Allele '+str(allele_count_R1R2)+': '+imputedgenotypes_dict[samplename][x][0].get('allele_name').split(' ')[2]+' '+imputedgenotypes_dict[samplename][x][1].get('allele_type'))     
-                    pdf.ln(3)
                     pdf.set_font("Courier", size=6)
                     if len(imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]) > 160:
-                        string = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1]
-                        string2 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2]
-                        string3 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3]
-                        chunks = range(12, len(string), 100)
+                        string = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[1][11:]
+                        string2 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[2][11:]
+                        string3 = imputedgenotypes_dict[samplename][x][0].get('alignment').split('\n')[3][11:]
+                        chunks = range(0, len(string), 100)
                         for index, chunk in enumerate(chunks):
-                            if index == 0:
-                                pdf.write(5, string[chunk-12:chunk+100])
-                                pdf.ln(3)
-                                pdf.write(5, string2[chunk-12:chunk+100])
-                                pdf.ln(3)
-                                pdf.write(5, string3[chunk-12:chunk+100])
-                            elif 0 < index < (len(chunks)-1):
+                            # if index == 0:
+                             # pdf.write(5, string[chunk-10:chunk+100])
+                             # pdf.ln(3)
+                             # pdf.write(5, string2[chunk-10:chunk+100])
+                             # pdf.ln(3)
+                             # pdf.write(5, string3[chunk-10:chunk+100])
+                            if index in range(0, len(chunks)-1):
                                 pdf.write(5, '\n'+4*' '+'query'+'  '+string[chunk:chunk+100])
                                 pdf.ln(3)
                                 pdf.write(5, 11*' '+string2[chunk:chunk+100])
@@ -766,7 +760,7 @@ def frequency_plots():
         try:
             os.remove(pdf_output)
         except OSError:
-            pass  
+            pass
 # Log frequency plotting time duration
     frequencyplotsDuration = str(datetime.now()- startTime_frequencyplots).split(':')[0]+' hr|'+str(datetime.now() - startTime_frequencyplots).split(':')[1]+' min|'+str(datetime.now() - startTime_frequencyplots).split(':')[2].split('.')[0]+' sec|'+str(datetime.now() - startTime_frequencyplots).split(':')[2].split('.')[1]+' microsec'
 
@@ -1527,6 +1521,7 @@ multiple_alignments_hsp_dict_invalid2 = { k : v for k,v in multiple_alignments_h
 print("""
 Script is now using BLASTDBCMD (NCBI) to retrieve reference sequences that span multiple high-scoring pairs identified by BLASTN.""")
 
+# 6-23-21
 # BLASTDBCMD: use BLASTN reference genome database for BLASTDBCMD sequence retrieval
 # Reference database (same as for blastn in earlier alignment step)
 db_input = db_path / db_prefix
@@ -1543,6 +1538,12 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
             pass
         else:
             del retrieved_sequence_updated
+        try:
+            retrieved_sequence_updated2
+        except NameError:
+            pass
+        else:
+            del retrieved_sequence_updated2
         # this sublist ultimately has 10 items; 1st 5 come from multiple_alignments_hsp_dict_valid, next 5 come from blastdbcmd & Genotypes.py in upcoming code below
         blastdbcmd_alignments_list_read_sublist = [read[0]]+[read[1]]+[read[2]]+[read[3]]+[read[4]]
         coordinate_range_exceeds_1kb_threshold = False
@@ -1562,7 +1563,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
             for x in hsp_from_to:
                 coordinates_list.append(int(x.split('>')[1].split('<')[0]))
         coordinate_range = str(min(set(coordinates_list)))+'-'+str(max(set(coordinates_list)))
-    # Check whether the hsp's are within 1 kb of one another.  If not, deprecate as multi-mapping.  If they are within 1 kb, assume that blastn split them as separate hsp's because of intervening deletion/insertion relative to reference sequence.  Attempt to reconstitute.
+        # Check whether the hsp's are within 1 kb of one another.  If not, deprecate as multi-mapping.  If they are within 1 kb, assume that blastn split them as separate hsp's because of intervening deletion/insertion relative to reference sequence.  Attempt to reconstitute.
         if max(set(coordinates_list))-min(set(coordinates_list)) > 1000:
             coordinate_range_exceeds_1kb_threshold = True
             # add this deprecated read to multiple_alignments_hsp_dict_invalid2
@@ -1599,6 +1600,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
             # address whether there needs to be a regrouping of hsp data to correspond to their order relative to an alignment reference span
             # first, if no order adjustment needed:
             if len(new_index_list) == 0:
+        # no resorting necessary
                 hsp_queries_and_midlines_list = []
                 for hsp in range(len(hsp_from_to_list)):
                     intervening_bases = ''
@@ -1644,10 +1646,9 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                             try:
                                 retrieved_sequence_updated
                             except NameError:
-                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
-                                # get indices of added
-                            else:
                                 retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
+                            else:
+                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
                         else:
                             hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp)) 
                     else:
@@ -1660,7 +1661,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                 hsp_queries_and_midlines_list = []
                 #print('reversed')
                 hsp_count = 0
-                for hsp in new_index_list:
+                for index, hsp in enumerate(new_index_list):
                     intervening_bases = ''
                     cognate_read_sequence = ''
                     result = ''
@@ -1683,7 +1684,9 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     # append read_ID (as fastaname) to hsp_crosscheck_back_to_read (making it index 0)
                     hsp_crosscheck_back_to_read.append(read_ID)
                     hsp_sequences_to_join = []
-                    for hsp in hsp_id_list:
+                    hsp_id_list_copy = list(hsp_id_list)
+                    hsp_id_list_copy.reverse() 
+                    for hsp in hsp_id_list_copy:
                         hsp_index = read.index(hsp)
                         hsp_sequences_to_join.append((read[hsp_index+3].split('>')[1].split('<')[0]))
                     hsp_sequences_joined = ''.join(hsp_sequences_to_join)
@@ -1699,23 +1702,23 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                     # find any intervening read bases that were not accounted for in an hsp
                     result = re.search(hsp_crosscheck_back_to_read[1][0]+'(.*)'+hsp_crosscheck_back_to_read[1][1], hsp_crosscheck_back_to_read[2])
                     if result:
-                        if hsp in range(0,len(hsp_from_to_list),2):
+                        if index in range(0,len(hsp_from_to_list),2):
                             intervening_bases = result.group(1)
-                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp+len(intervening_bases)))
+                            hsp_queries_and_midlines_list.append((hsp_query,intervening_bases,hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp-2*len(intervening_bases)))
                             try:
                                 retrieved_sequence_updated
                             except NameError:
-                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
+                                retrieved_sequence_updated = ''.join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
                                 # get indices of added
                             else:
-                                retrieved_sequence_updated = ((result.span(1)[1]-result.span(1)[0])*'-').join([retrieved_sequence[:result.span(1)[0]],retrieved_sequence[result.span(1)[1]:]])
+                                retrieved_sequence_updated = ''.join([retrieved_sequence_updated[:result.span(1)[0]],retrieved_sequence_updated[result.span(1)[1]:]])
                         else:
                             hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp)) 
                     else:
                         hsp_queries_and_midlines_list.append((hsp_query,'',hsp_midline,hsp_hit,hsp_hit_adjustment,gap_to_next_hsp))
             # retrieved_sequence
             # reconstructed alignment midline
-            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][2]+(hsp_queries_and_midlines_list[hsp][5]*' ')) for hsp in range(len(hsp_from_to_list))])
+            reconstructed_midline = ''.join([(hsp_queries_and_midlines_list[hsp][2]+((hsp_queries_and_midlines_list[hsp][5]+len(hsp_queries_and_midlines_list[hsp][1]))*' ')) for hsp in range(len(hsp_from_to_list))])
             # reconstructed alignment sequence
             reconstructed_alignment_sequence = ''.join([(hsp_queries_and_midlines_list[hsp][0]+hsp_queries_and_midlines_list[hsp][1]+(hsp_queries_and_midlines_list[hsp][5]*'-')) for hsp in range(len(hsp_from_to_list))])
             # provide reconstituted 'hsp hit from-to'
@@ -1739,7 +1742,7 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                             except NameError:
                                 retrieved_sequence_updated = retrieved_sequence.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
                             else:
-                                 retrieved_sequence_updated = retrieved_sequence_updated.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                                retrieved_sequence_updated = retrieved_sequence_updated.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
                     blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
                 elif adjustment_required == False:
                     blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence+'</Hsp_hseq>')
@@ -1758,8 +1761,8 @@ for index, i in enumerate(multiple_alignments_hsp_dict_valid2):
                             except NameError:
                                 retrieved_sequence_updated2 = retrieved_sequence_updated.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
                             else:
-                                 retrieved_sequence_updated2 = retrieved_sequence_updated2.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
-                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
+                                retrieved_sequence_updated2 = retrieved_sequence_updated2.replace(hit_sequence, hsp_queries_and_midlines_list[index][3])
+                    blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated2+'</Hsp_hseq>')
                 elif adjustment_required == False:
                     blastdbcmd_alignments_list_read_sublist.append('<Hsp_hseq>'+retrieved_sequence_updated+'</Hsp_hseq>')
             blastdbcmd_alignments_list_read_sublist.append('<Hsp_midline>'+reconstructed_midline+'</Hsp_midline>')
@@ -1843,7 +1846,7 @@ alignmentoutput_dict2 = { k : v for k,v in alignmentoutput_dict.items() if v}
 #        print(i, alignmentoutput_dict2.get(i)[x][4].split(">")[1].split("<")[0])
 
 print("""
-Script is now extrapolating genotypes.""")
+Script is now inferring genotypes.""")
 
 # Define nt complement dictionary
 nt_dict = {'A':'T', 'T':'A', 'G':'C', 'C':'G', 'N':'N', '-':'-'}
@@ -2582,7 +2585,7 @@ for i in no_hits_samplename_list:
 # Prepare population_summary.txt file
 with open(str(population_summary_output), 'a+') as file:
     file.write('Genotypes.py: Population Summary\nDate: ' + (datetime.today().strftime("%m/%d/%Y")) +
-"""\n\nI. Synopsis of Interpretations: Allele Definitions & Genotype Extrapolations
+"""\n\nI. Synopsis of Interpretations: Allele Definitions & Genotype Inferences
 
     (A) Sample summary
         (i) Number of samples processed: """ + str(total_sample_count) +
@@ -2706,7 +2709,7 @@ fileprocessingDuration = str(datetime.now()- startTime_fileprocessing).split(':'
 # Optional: print supporting evidence (frequency metrics demonstrated in plots) for allele definitions & inferred genotypes to output file, allele_evidence.pdf
 if frequency_plot_check == 'Y':
     print("""
-Script is now compiling evidence for extrapolated genotypes in the form of allele frequency plots.""")
+Script is now compiling evidence for inferred genotypes in the form of allele frequency plots.""")
     frequency_plots()
 elif frequency_plot_check == 'N':
     pass
