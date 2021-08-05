@@ -140,6 +140,11 @@ try:
 except ImportError:
     missing_dependencies_list.append('pandas')
     
+try:
+    import gc
+except ImportError:
+    missing_dependencies_list.append('gc')
+    
 if len(missing_dependencies_list) > 0:
     print('ModuleNotFoundError\n')
     print('Please note, the following required Python module(s) are not found in your Python system path:')
@@ -214,6 +219,9 @@ from PyPDF2 import PdfFileMerger, PdfFileReader
 
 # Python panel data frames
 import pandas as pd
+
+# Python garbage collector
+import gc
 
 # start time
 initialTime = datetime.now()
@@ -537,7 +545,7 @@ def frequency_plots():
         label_list_d = [value for value in zip(x1,y1d,spacing1,R1R2_allele_type,R1R2_allele_specs)]
 #
 # Plots
-        fig = plt.figure(figsize=(11,7), dpi=250)
+        fig = plt.figure(figsize=(11,7), dpi=125)
 # Subplot 1
         ax1 = fig.add_subplot(141)
         ax1.grid(color='#808080', linestyle='--', linewidth=0.2, axis='x', zorder=0)
@@ -679,10 +687,12 @@ def frequency_plots():
                         ax4.text(i[1]+2, i[2], str(i[1])+'% | '+i[3], va = 'center', color = 'black', fontsize=7)
         plt.tight_layout()
 #
-        plt.savefig(plot_name, format='png', dpi=250)
+        plt.savefig(plot_name, format='png', dpi=125)
+        fig.clf()
         plt.close(fig)
 #   
         pdf = FPDF('L', 'mm', (400, 250))
+        pdf.compress = True
         pdf.add_page()
         pdf.set_font("Arial", size=8, style='BU')
         pdf.write(5, samplename)
@@ -756,6 +766,9 @@ def frequency_plots():
             merger.append(PdfFileReader(filename, 'rb'))
 #   
         merger.write(str(allele_evidence_output))
+        merger.close()
+        gc.collect()
+
     # Remove sample png file and pdf file as intermediaries
         try:
             os.remove(plot_name)
