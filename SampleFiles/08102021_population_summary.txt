@@ -1,0 +1,99 @@
+Genotypes.py: Population Summary
+Date: 08/10/2021
+
+I. Synopsis of Interpretations: Allele Definitions & Genotype Inferences
+
+    (A) Sample summary
+        (i) Number of samples processed: 4
+        (ii) % samples called (genotype inferred): 4 (100.0%)
+
+    (B) Genotypes summary
+        (i) % samples diploid (1-2 prominent alleles inferred): 4 (100.0%)
+            (1) % homozygous wild-type (wt): 0 (0.0%)
+            (2) % homozygous mutant: 1 (25.0%)
+                -> % homozygous deletion: 1 (25.0%)
+                -> % homozygous insertion: 0 (0.0%)
+                -> % homozygous substitution: 0 (0.0%)
+                -> % homozygous complex indel: 0 (0.0%)
+            (3) % heterozygous (wt + mutant): 1 (25.0%)
+                -> % heterozygous deletion: 1 (25.0%)
+                -> % heterozygous insertion: 0 (0.0%)
+                -> % heterozygous substitution: 0 (0.0%)
+                -> % heterozygous complex indel: 0 (0.0%)
+            (4) % heterozygous (mutant + mutant): 2 (50.0%)
+                -> % heterozygous deletion + insertion: 0 (0.0%)
+                -> % heterozygous deletion + substitution: 0 (0.0%)
+                -> % heterozygous insertion + substitution: 0 (0.0%)
+                -> % heterozygous deletion + complex indel: 0 (0.0%)
+                -> % heterozygous insertion + complex indel: 0 (0.0%)
+                -> % heterozygous substitution + complex indel: 0 (0.0%)
+        (ii) % samples multiploid (>2 prominent alleles inferred): 0 (0.0%)
+
+    (B) Alleles summary
+        (i) % wild-type alleles: 1 (12.5% of total alleles)
+        (ii) % mutant alleles: 7 (87.5% of total alleles)
+            (1) % deletion alleles: 7 (87.5% of total alleles)
+            (2) % insertion alleles: 0 (0.0% of total alleles)
+            (3) % substitution alleles: 0 (0.0% of total alleles)
+            (4) % complex indel alleles: 0 (0.0% of total alleles)
+
+II. Synopsis of Reads Lost to Analysis
+    Reads among the 'Top 10' reads are deprecated (not analyzed by Genotypes.py) if they fall into the following categories:
+    (A) no hits, (B) multiple hits, or (C) (if >1 hsp for 1 hit) overlapping hsp's in reference database and/or hsp span (end-to-end) that exceeds 1 kb
+    
+    (A) Samples with reads among the 'top 10 most abundant reads', that did not map to the reference genome
+        (i) For the following sample IDs (0), NO reads among the "top 10 most abundant reads" could be mapped to the reference genome:
+               None
+        (ii) For the following sample IDs (0), the indicated reads among the "top 10 most abundant reads" did not map to the reference genome:
+               None
+
+    (B) Samples with reads among the "top 10 most abundant reads", that mapped to multiple loci in the reference genome
+        (i) For the following sample IDs (0), the indicated reads among the "top 10 most abundant reads" mapped to more than one locus in the reference genome:
+               None
+
+    (C) Samples with reads among the 'top 10 most abundant reads', with high-scoring pairs (hsp's) that were attempted 
+        for reconstruction with BLASTDBCMD sequence retrieval across hsp span, but deprecated because the hsp's
+        a) overlapped in the reference genome (potential artefact or signature of inversion, duplication and/or
+        b) exceeded 1 kb span (end-to-end)
+        Consult fasta.fa and/or BLASTN output if any of these reads is of further interest to examine manually:
+
+        (i) For the following sample IDs (1), the indicated reads among the 'top 10 most abundant reads' exhibited overlapping hsp's aligned to the reference genome:
+               KE4-1-C02
+
+               Details:
+               KE4-1-C02
+               =========
+               Read: KE4-1-C02_R1+R2_[1/144]_rank5_%totalreads:0.69_percentile:48_%top10reads:1.0_%readsfilteredfor1%:None_%readsfilteredfor10%:None
+               Hit: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly: ref|NC_000006.12|
+               Hsp 1: 35602016-35602190
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAACTTAAACTGGA--GCAC-TGA-CTTATTGTTCTCTTACTGCCCTAGAGCAATTT-T-----G-TT----T-GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                   |||||||||||||||||||||||||||||||||||||||||||||||||||||||| |      || || | ||| |   |||  | ||  || ||  |||   |||| ||| ||   ||| ||   ||        |||||||| |     | ||    | |||||||||||||||||||||||||||||||||||
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTG------AAGAGCACAGA-A---CACC-CTGTT-CTGAATGTGGCTGGCACATGAACTCGATGTGCTG--AC--------AGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+               Hsp 2: 35601997-35602071
+                   AAGAGAG-TGCACAGCAGTAACTTAAACTGGAGCACTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+                   ||| ||| |||| | || | |||||||||||||| |||||||||||||||||||||||||||||||||||||||||
+                   AAGCGAGCTGCAAAACA-TCACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+               Hsp 3: 35602156-35602191
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAAC
+                   ||||||||||||||||||||||||||||||||||||
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAAC
+
+               Read: KE4-1-C02_R1+R2_[1/144]_rank7_%totalreads:0.69_percentile:48_%top10reads:1.0_%readsfilteredfor1%:None_%readsfilteredfor10%:None
+               Hit: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly: ref|NC_000006.12|
+               Hsp 1: 35602016-35602071
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+                   ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+               Hsp 2: 35602016-35602071
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+                   ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+                   ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT
+               Hsp 3: 35602156-35602190
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                   |||||||||||||||||||||||||||||||||||
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+               Hsp 4: 35602156-35602190
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                   |||||||||||||||||||||||||||||||||||
+                   GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+

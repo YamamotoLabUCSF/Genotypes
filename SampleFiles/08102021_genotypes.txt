@@ -1,0 +1,502 @@
+Genotypes.py: Genotypes
+Date: 08/10/2021
+
+
+
+HOMOZYGOUS DELETION
+...................
+
+KE4-1-C02
+*****************************************************
+INFERRED GENOTYPE: |homozygous| deletion (delta/delta)
+*****************************************************
+
+
+   *~~~~~~~~~~~~~~~~~*
+   | READ 1 + READ 2 |
+   *~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-1-C02 R1+R2 [82/144] rank1 %totalreads:56.94 percentile:100 %top10reads:82.0 %readsfilteredfor1%:88.17 %readsfilteredfor10%:100.0 | mutant, likely deletion, 84 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT------------------------------------------------------------------------------------GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||                                                                                    |||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+   |  >>>>> remaining alleles occur at frequency <10% <<<<< |
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-1-C02 R1+R2 [8/144] rank2 %totalreads:5.56 percentile:98 %top10reads:8.0 %readsfilteredfor1%:8.6 %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602044
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTC
+           |||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTC
+
+
+   Allele: KE4-1-C02 R1+R2 [3/144] rank3 %totalreads:2.08 percentile:96 %top10reads:3.0 %readsfilteredfor1%:3.23 %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602044-35602016
+
+    query  GAACAATAAGTCAGAGCTCCAGTTTAAGT
+           |||||||||||||||||||||||||||||
+reference  GAACAATAAGTCAGAGCTCCAGTTTAAGT
+
+
+   Allele: KE4-1-C02 R1+R2 [1/144] rank4 %totalreads:0.69 percentile:48 %top10reads:1.0 %readsfilteredfor1%:None %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 10, GRCh38.p12 Primary Assembly, ref|NC_000010.11| 90921451-90921625
+
+    query  ATGCCCTACATATCACACCCCCAGTAATATCTTTCTGATAAGCAGACTTATCAACACTTCACTTAGGGGAAACTTGTCCCAGGACATCCTATTCCCTGGGTAAACAGCCTGAGGGGAAGGGATCTGGGCCCTAAAGGCACTTGTCTATATCTGTTTGGAATTCTTTGGAGTGATG
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ATGCCCTACATATCACACCCCCAGTAATATCTTTCTGATAAGCAGACTTATCAACACTTCACTTAGGGGAAACTTGTCCCAGGACATCCTATTCCCTGGGTAAACAGCCTGAGGGGAAGGGATCTGGGCCCTAAAGGCACTTGTCTATATCTGTTTGGAATTCTTTGGAGTGATG
+
+
+   Allele: KE4-1-C02 R1+R2 [1/144] rank6 %totalreads:0.69 percentile:48 %top10reads:1.0 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 84 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT------------------------------------------------------------------------------------GGGGGGAAAAAAGGAAAGAGAGTGCACAGAAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||                                                                                    ||||||||||||||||||||||||||||| |||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-1-C02 R1+R2 [1/144] rank8 %totalreads:0.69 percentile:48 %top10reads:1.0 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 84 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602191
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT------------------------------------------------------------------------------------GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAAC
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||                                                                                    ||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAAC
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-1-C02 R1+R2 [1/144] rank9 %totalreads:0.69 percentile:48 %top10reads:1.0 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 84 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT------------------------------------------------------------------------------------GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||                                                                                    |||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-1-C02 R1+R2 [1/144] rank10 %totalreads:0.69 percentile:48 %top10reads:1.0 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 85 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTT------------------------------------------------------------------------------------GGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| |||||||||||||||||||||||||||||||||||                                                                                    |||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+
+
+BIALLELIC DELETION
+..................
+
+KE4-4-G02
+******************************************************************
+INFERRED GENOTYPE: |heterozygous| deletion1 + deletion2 (del1/del2)
+******************************************************************
+
+
+   *~~~~~~~~~~~~~~~~~*
+   | READ 1 + READ 2 |
+   *~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-4-G02 R1+R2 [443/996] rank1 %totalreads:44.48 percentile:100 %top10reads:51.75 %readsfilteredfor1%:53.31 %readsfilteredfor10%:54.89 | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [364/996] rank2 %totalreads:36.55 percentile:99 %top10reads:42.52 %readsfilteredfor1%:43.8 %readsfilteredfor10%:45.11 | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+   |  >>>>> remaining alleles occur at frequency <10% <<<<< |
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-4-G02 R1+R2 [13/996] rank3 %totalreads:1.31 percentile:98 %top10reads:1.52 %readsfilteredfor1%:1.56 %readsfilteredfor10%:None | mutant, likely deletion, 3 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [11/996] rank4 %totalreads:1.1 percentile:97 %top10reads:1.29 %readsfilteredfor1%:1.32 %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [7/996] rank5 %totalreads:0.7 percentile:97 %top10reads:0.82 %readsfilteredfor1%:None %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [5/996] rank6 %totalreads:0.5 percentile:96 %top10reads:0.58 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602190-35602016
+
+                                                                                       5'-GTGCCAGCCACATTCAGAAC-3' (guide sequence)
+                                                                                                          v
+    query  TTACTGCTGTGCACTCTCTTTCCTTTTTTCCCCCCTATTTTAATCGGAGTACAAATTGCTGTCAGCACATCGAGTTCATGTGCCAGCCACATTCAG--CAGGGTGTTCTGTGCTCTTCAAAACAAAATTGCTCTAGGGCAGTAAGAGAACAATAAGTCAGAGCTCCAGTTTAAGT
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  TTACTGCTGTGCACTCTCTTTCCTTTTTTCCCCCCTATTTTAATCGGAGTACAAATTGCTGTCAGCACATCGAGTTCATGTGCCAGCCACATTCAGAACAGGGTGTTCTGTGCTCTTCAAAACAAAATTGCTCTAGGGCAGTAAGAGAACAATAAGTCAGAGCTCCAGTTTAAGT
+                                                                                                         ^^^^^^^^^^^^^^^^
+                                                                                                      5'-AGAACAGGGTGTTCTG-3' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [4/996] rank7 %totalreads:0.4 percentile:95 %top10reads:0.47 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTC-GACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [3/996] rank8 %totalreads:0.3 percentile:94 %top10reads:0.35 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAG-GCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [3/996] rank9 %totalreads:0.3 percentile:94 %top10reads:0.35 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTACTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  |||||||||||||||||||||||||||||| |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G02 R1+R2 [3/996] rank10 %totalreads:0.3 percentile:94 %top10reads:0.35 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 3 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTC-GACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+KE4-4-G10
+******************************************************************
+INFERRED GENOTYPE: |heterozygous| deletion1 + deletion2 (del1/del2)
+******************************************************************
+
+
+   *~~~~~~~~~~~~~~~~~*
+   | READ 1 + READ 2 |
+   *~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-4-G10 R1+R2 [347/806] rank1 %totalreads:43.05 percentile:100 %top10reads:50.0 %readsfilteredfor1%:51.64 %readsfilteredfor10%:52.5 | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [314/806] rank2 %totalreads:38.96 percentile:99 %top10reads:45.24 %readsfilteredfor1%:46.73 %readsfilteredfor10%:47.5 | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+   |  >>>>> remaining alleles occur at frequency <10% <<<<< |
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-4-G10 R1+R2 [11/806] rank3 %totalreads:1.36 percentile:98 %top10reads:1.59 %readsfilteredfor1%:1.64 %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [4/806] rank4 %totalreads:0.5 percentile:97 %top10reads:0.58 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 3 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [4/806] rank5 %totalreads:0.5 percentile:97 %top10reads:0.58 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602190-35602016
+
+                                                                                       5'-GTGCCAGCCACATTCAGAAC-3' (guide sequence)
+                                                                                                          v
+    query  TTACTGCTGTGCACTCTCTTTCCTTTTTTCCCCCCTATTTTAATCGGAGTACAAATTGCTGTCAGCACATCGAGTTCATGTGCCAGCCACATTCAG--CAGGGTGTTCTGTGCTCTTCAAAACAAAATTGCTCTAGGGCAGTAAGAGAACAATAAGTCAGAGCTCCAGTTTAAGT
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  TTACTGCTGTGCACTCTCTTTCCTTTTTTCCCCCCTATTTTAATCGGAGTACAAATTGCTGTCAGCACATCGAGTTCATGTGCCAGCCACATTCAGAACAGGGTGTTCTGTGCTCTTCAAAACAAAATTGCTCTAGGGCAGTAAGAGAACAATAAGTCAGAGCTCCAGTTTAAGT
+                                                                                                         ^^^^^^^^^^^^^^^^
+                                                                                                      5'-AGAACAGGGTGTTCTG-3' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [3/806] rank6 %totalreads:0.37 percentile:94 %top10reads:0.43 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGGTTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  |||||||||| |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [3/806] rank7 %totalreads:0.37 percentile:94 %top10reads:0.43 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTTCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [3/806] rank8 %totalreads:0.37 percentile:94 %top10reads:0.43 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGA-AGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| |||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [3/806] rank9 %totalreads:0.37 percentile:94 %top10reads:0.43 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602019-35602190
+
+                                                                                 3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                       v
+    query  TAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT----ATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  TAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                         ^^^^^^^^^^^^^^^^
+                                                                      3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-4-G10 R1+R2 [2/806] rank10 %totalreads:0.25 percentile:91 %top10reads:0.29 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 2 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTG--CTGAATGTGTCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  ||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+
+
+GENOTYPE UNCLEAR (e.g., UNUSUAL ALLELE FREQUENCIES)
+..................................................
+
+KE4-2-A01
+****************************************************************
+INFERRED GENOTYPE: |heterozygous| deletion + wild-type (delta/wt)
+****************************************************************
+
+
+   *~~~~~~~~~~~~~~~~~*
+   | READ 1 + READ 2 |
+   *~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-2-A01 R1+R2 [195/435] rank1 %totalreads:44.83 percentile:100 %top10reads:51.86 %readsfilteredfor1%:53.28 %readsfilteredfor10%:58.21 | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [140/435] rank2 %totalreads:32.18 percentile:98 %top10reads:37.23 %readsfilteredfor1%:38.25 %readsfilteredfor10%:41.79 | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT-T---TGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| |   |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+   |  >>>>> remaining alleles occur at frequency <10% <<<<< |
+   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+   Allele: KE4-2-A01 R1+R2 [15/435] rank3 %totalreads:3.45 percentile:97 %top10reads:3.99 %readsfilteredfor1%:4.1 %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602044
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTC
+           |||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTC
+
+
+   Allele: KE4-2-A01 R1+R2 [11/435] rank4 %totalreads:2.53 percentile:95 %top10reads:2.93 %readsfilteredfor1%:3.01 %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602046
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTC
+           |||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTC
+
+
+   Allele: KE4-2-A01 R1+R2 [5/435] rank5 %totalreads:1.15 percentile:94 %top10reads:1.33 %readsfilteredfor1%:1.37 %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT-T---TGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| |||||||||||||||||||||||||||||||||||||||||||||||||||||||||| |   |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [4/435] rank6 %totalreads:0.92 percentile:92 %top10reads:1.06 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 1 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGAC-TATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           |||||||||||||||||||| ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [2/435] rank7 %totalreads:0.46 percentile:90 %top10reads:0.53 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 5 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTT-T---TGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCA-AGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| |   |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [2/435] rank8 %totalreads:0.46 percentile:90 %top10reads:0.53 %readsfilteredfor1%:None %readsfilteredfor10%:None | wild-type
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602019-35602190
+
+    query  TAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  TAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                         ^^^^^^^^^^^^^^^^
+                                                                      3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [1/435] rank9 %totalreads:0.23 percentile:44 %top10reads:0.27 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely deletion, 4 bp
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+                                                                                    3'-CAAGACTTACACCGACCGTG-5' (guide sequence)
+                                                                                          v
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTTAAGAGCACAGAACACCCTGTT-T---TGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ||||||||||||||||||||| |   |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
+   Allele: KE4-2-A01 R1+R2 [1/435] rank10 %totalreads:0.23 percentile:44 %top10reads:0.27 %readsfilteredfor1%:None %readsfilteredfor10%:None | mutant, likely substitution
+    Locus: Homo sapiens chromosome 6, GRCh38.p12 Primary Assembly, ref|NC_000006.12| 35602016-35602190
+
+    query  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGAAGTAA
+           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| |||||
+reference  ACTTAAACTGGAGCTCTGACTTATTGTTCTCTTACTGCCCTAGAGCAATTTTGTTTTGAAGAGCACAGAACACCCTGTTCTGAATGTGGCTGGCACATGAACTCGATGTGCTGACAGCAATTTGTACTCCGATTAAAATAGGGGGGAAAAAAGGAAAGAGAGTGCACAGCAGTAA
+                                                                            ^^^^^^^^^^^^^^^^
+                                                                         3'-GTCTTGTGGGACAAGA-5' (sequence of interest)
+
+
