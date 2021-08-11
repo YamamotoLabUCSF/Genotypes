@@ -8,7 +8,8 @@ For the following user-entered variables, available test files can be used for t
 Notes regarding # of fastq files as options for script input:
 --fastq_files_subset directory contains R1 and R2 fastq files for 8 samples
 --an alternative fastq source directory (fastq_files) is available in the associated Zenodo repository (https://doi.org/10.5281/zenodo.3406861), and contains R1 and R2 fastq files for 384 samples;
---file output sizes and time to complete test runs are relatively small for fastq_files_subset (available for download here in GitHub), large for fastq_files (available for download from Zenodo)
+--file output sizes and time to complete test runs are relatively small for fastq_files_subset (available for download here in GitHub), large for fastq_files (available for download from Zenodo);
+--blastn_database for human genome (GRCh38) is available in the associated Zenodo repository (https://doi.org/10.5281/zenodo.3406861)
 ===========================================================================
 
 output_directory: ***user-defined (system-specific)***
@@ -18,8 +19,7 @@ fastq_directory: SampleTestFiles/fastq_files_subset
 
 blastn_path: ***user-defined (system-specific)***
 
-db_path: SampleTestFiles/blastn_database
-----------------------------------------
+db_path: **user-defined (following database download from Zenodo repository)**
 
 db_prefix: GRCh38
 -----------------
